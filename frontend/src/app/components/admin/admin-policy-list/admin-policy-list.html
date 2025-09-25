@@ -1,0 +1,102 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold mb-8 text-white text-center">All Policies</h2>
+  
+    <div *ngIf="loading$ | async" class="text-center text-blue-400 text-lg mb-6">
+      <div class="inline-flex items-center">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400 mr-3"></div>
+        Loading policies...
+      </div>
+    </div>
+  
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="policies$ | async as policies">
+      <div *ngFor="let policy of policies" class="bg-slate-800/90 backdrop-blur-sm shadow-2xl rounded-xl p-6 border border-slate-700 hover:border-purple-500 transition-all duration-300">
+        <!-- Policy Image -->
+        <div class="mb-4">
+          <img [src]="policy.imageUrl || policy.image" 
+               alt="Policy Image" 
+               class="w-full h-48 object-cover rounded-lg mb-3 border border-slate-600"
+               onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzM0MTU1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='">
+        </div>
+  
+        <div *ngIf="editingPolicy?._id !== policy._id">
+          <h3 class="text-xl font-bold text-white mb-2">{{ policy.title }}</h3>
+          <p class="text-sm text-gray-300 mb-3 line-clamp-3">{{ policy.description }}</p>
+          <div class="space-y-2 mb-4">
+            <p class="text-white font-semibold">
+              <span class="text-purple-400">Premium:</span> ${{ policy.premium | number }}
+            </p>
+            <p class="text-white">
+              <span class="text-purple-400">Term:</span> {{ policy.termMonths }} months
+            </p>
+            <p class="text-white">
+              <span class="text-purple-400">Min Sum Insured:</span> ${{ policy.minSumInsured | number }}
+            </p>
+          </div>
+  
+          <div class="flex gap-2 mt-4">
+            <button (click)="startEdit(policy)" 
+                    class="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+              Edit
+            </button>
+            <button (click)="deletePolicy(policy._id)" 
+                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+              Delete
+            </button>
+          </div>
+        </div>
+  
+        <!-- Edit Mode -->
+        <div *ngIf="editingPolicy?._id === policy._id" class="space-y-3">
+          <input [(ngModel)]="editingPolicy.title" 
+                 placeholder="Policy Title"
+                 class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none" />
+          
+          <textarea [(ngModel)]="editingPolicy.description" 
+                    placeholder="Policy Description"
+                    rows="3"
+                    class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none"></textarea>
+          
+          <input [(ngModel)]="editingPolicy.premium" 
+                 type="number" 
+                 placeholder="Premium"
+                 class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none" />
+          
+          <input [(ngModel)]="editingPolicy.termMonths" 
+                 type="number" 
+                 placeholder="Term (months)"
+                 class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none" />
+          
+          <input [(ngModel)]="editingPolicy.minSumInsured" 
+                 type="number" 
+                 placeholder="Min Sum Insured"
+                 class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none" />
+  
+          <div class="flex gap-2 mt-4">
+            <button (click)="saveEdit()" 
+                    class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+              Save
+            </button>
+            <button (click)="cancelEdit()" 
+                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Policies Message -->
+    <div *ngIf="(policies$ | async)?.length === 0 && !(loading$ | async)" 
+         class="text-center py-12">
+      <div class="text-gray-400 text-lg">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <p class="text-xl font-medium mb-2">No policies found</p>
+        <p class="text-gray-500">Create your first policy to get started.</p>
+      </div>
+    </div>
+  </div>
+</div>
+  

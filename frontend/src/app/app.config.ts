@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection, inject } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, inject, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
@@ -16,6 +16,9 @@ import { AuthService } from './services/auth.service';
 import { policyReducer } from './store/policy/policy.reducer';
 import { PolicyEffects } from './store/policy/policy.effects';
 import { PolicyService } from './services/policy.service';
+import { userReducer } from './store/user/user.reducer';
+import { UserEffects } from './store/user/user.effects';
+import { AppInitializerService, initializeApp } from './services/app-initializer.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -34,14 +37,22 @@ export const appConfig: ApplicationConfig = {
     }),
     provideStore({
       auth: authReducer,
-      policy: policyReducer
+      policy: policyReducer,
+      users: userReducer
     }),
-    provideEffects([AuthEffects, PolicyEffects]),
+    provideEffects([AuthEffects, PolicyEffects, UserEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,
     }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppInitializerService],
+      multi: true
+    },
     AuthService,
-    PolicyService
+    PolicyService,
+    AppInitializerService
   ]
 };

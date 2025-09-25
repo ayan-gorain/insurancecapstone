@@ -45,4 +45,28 @@ export class PolicyEffects {
       )
     )
   );
+
+  deletePolicy$ = createEffect(() =>
+    this.actions$.pipe(
+        ofType(PolicyActions.deletePolicy),
+        switchMap(({ policyId }) =>
+            this.policyService.deletePolicy(policyId).pipe(
+                map(() => PolicyActions.deletePolicySuccess({ policyId })),
+                catchError((error) => of(PolicyActions.deletePolicyFailure({ error: error.error?.message || 'Failed to delete policy' })))
+            )
+        )
+    )
+  );
+
+updatePolicy$ = createEffect(() =>
+    this.actions$.pipe(
+        ofType(PolicyActions.updatePolicy),
+        switchMap(({ policyId, policyData }) =>
+            this.policyService.updatePolicy(policyId, policyData).pipe(
+                map((policy) => PolicyActions.updatePolicySuccess({ policy })),
+                catchError((error) => of(PolicyActions.updatePolicyFailure({ error: error.error?.message || 'Failed to update policy' })))
+            )
+        )
+    )
+  );
 }

@@ -7,6 +7,7 @@ import { ApolloServer } from "@apollo/server";
 import { userTypeDefs } from "./graphql/userTypeDefs.js";
 import { userResolvers } from "./graphql/userResolvers.js";
 import adminRoutes from "./routes/admin.routes.js";
+import { authMiddleware } from "./authMiddleware.js";
 
 dotenv.config();
 const port = process.env.PORT || 4000;
@@ -20,7 +21,28 @@ const server = new ApolloServer({typeDefs:userTypeDefs,resolvers:userResolvers})
 
 await server.start();
 
-app.use("/graphql", expressMiddleware(server));
+app.use("/graphql", expressMiddleware(server, {
+  context: async ({ req }) => {
+    // Extract token from Authorization header
+    const token = req.headers.authorization?.split(" ")[1];
+    
+    if (token) {
+      try {
+        const jwt = await import("jsonwebtoken");
+        const User = (await import("./models/User.js")).default;
+        const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId).select("-passwordHash");
+        return { user };
+      } catch (error) {
+        // Token is invalid, but we don't throw here
+        // Let individual resolvers handle authentication
+        return { user: null };
+      }
+    }
+    
+    return { user: null };
+  }
+}));
 
 mongoose
   .connect(process.env.MONGO_URI)

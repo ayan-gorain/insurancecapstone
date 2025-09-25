@@ -65,9 +65,37 @@ export class AuthEffects {
         ofType(AuthActions.logout),
         tap(() => {
           localStorage.removeItem('token');
-          this.router.navigate(['/login']);
+          // Simple page refresh to clear all states
+          window.location.href = '/login';
         })
       ),
     { dispatch: false }
+  );
+
+  initializeAuth$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.initializeAuth),
+      mergeMap(() => {
+        const token = localStorage.getItem('token');
+        console.log('Initializing auth with token:', token ? 'exists' : 'none');
+        
+        if (!token) {
+          console.log('No token found, auth initialization failed');
+          return of(AuthActions.initializeAuthFailure());
+        }
+        
+        return this.authService.validateToken(token).pipe(
+          map((user: any) => {
+            console.log('Token validation successful, user:', user);
+            return AuthActions.initializeAuthSuccess({ user, token });
+          }),
+          catchError((error) => {
+            console.log('Token validation failed:', error);
+            localStorage.removeItem('token');
+            return of(AuthActions.initializeAuthFailure());
+          })
+        );
+      })
+    )
   );
 }

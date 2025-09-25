@@ -8,6 +8,8 @@ export const userTypeDefs=gql `
         role:String!
         photo:String
         address:String
+        assignedAgentId:ID
+        assignedAgent:User
         createdAt:String
         updatedAt:String
      }
@@ -19,7 +21,7 @@ export const userTypeDefs=gql `
         name:String!
         email:String!
         password:String!
-        role:String!
+        role:String  # Optional - will be forced to 'customer'
         photo:String  # Base64 encoded image string
         address:String
     }
@@ -30,6 +32,7 @@ export const userTypeDefs=gql `
     type Query{
         users: [User!]!
         user(_id:ID!): User
+        me: User
     }
     type Mutation{
         signup(input:SignupInput!):AuthPayload!

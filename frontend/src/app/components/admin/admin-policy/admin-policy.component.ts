@@ -3,8 +3,8 @@ import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angula
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import * as PolicyActions from '../../store/policy/policy.actions';
-import { selectPolicyLoading, selectPolicyError, selectCreatedPolicy } from '../../store/policy/policy.selectors';
+import * as PolicyActions from '../../../store/policy/policy.actions';
+import { selectPolicyLoading, selectPolicyError, selectCreatedPolicy } from '../../../store/policy/policy.selectors';
 import { RouterModule } from '@angular/router';
 
 @Component({

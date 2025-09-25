@@ -38,4 +38,20 @@ export class PolicyService {
 
     return this.http.get<any[]>(`${this.apiUrl}/admin/policies`, { headers });
   }
+  deletePolicy(policyId: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.delete(`${this.apiUrl}/admin/policies/${policyId}`, { headers });
+  }
+  updatePolicy(policyid: string, policyData: Partial<PolicyData>): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.put(`${this.apiUrl}/admin/policies/${policyid}`, policyData, { headers });
+  }
 }

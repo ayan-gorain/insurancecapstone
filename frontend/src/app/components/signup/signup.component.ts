@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule,RouterModule]
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit {
   form: FormGroup;
   photoName: string | null = null;
   photoPreview: string | ArrayBuffer | null = null; // For showing preview
@@ -30,13 +30,26 @@ export class SignupComponent {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      role: ['customer', Validators.required],
+      // Role is fixed to 'customer' - no user selection
     });
 
     // Initialize observables
     this.loading$ = this.store.select(selectLoading);
     this.error$ = this.store.select(selectError);
     this.user$ = this.store.select(selectUser);
+  }
+
+  ngOnInit() {
+    // Reset form to ensure clean state
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.photoName = null;
+    this.photoPreview = null;
+    this.photoBase64 = null;
+    this.showPassword = false;
   }
 
   onFileSelected(event: Event): void {
@@ -56,14 +69,14 @@ export class SignupComponent {
 
   onSubmit(): void {
     if (this.form.valid) {
-      const { name, email, password, role } = this.form.value;
+      const { name, email, password } = this.form.value;
 
       this.store.dispatch(
         AuthActions.signup({
           name,
           email,
           password,
-          role,
+          role: 'customer', // Fixed role - only customers can signup
           photo: this.photoBase64 || undefined
         })
       );

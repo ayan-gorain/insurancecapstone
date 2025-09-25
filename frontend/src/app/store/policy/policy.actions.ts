@@ -39,3 +39,35 @@ export const loadPoliciesFailure = createAction(
 
 // Clear Policy State
 export const clearPolicyState = createAction('[Policy] Clear Policy State');
+
+// Delete Policy Actions
+export const deletePolicy = createAction(
+  '[Policy] Delete Policy',
+  props<{ policyId: string }>()
+);
+
+export const deletePolicySuccess = createAction(
+  '[Policy] Delete Policy Success',
+  props<{ policyId: string }>()
+);
+
+export const deletePolicyFailure = createAction(
+  '[Policy] Delete Policy Failure',
+  props<{ error: string }>()
+);
+
+// Update Policy Actions
+export const updatePolicy = createAction(
+  '[Policy] Update Policy',
+  props<{ policyId: string, policyData: Partial<any> }>()
+);
+
+export const updatePolicySuccess = createAction(
+  '[Policy] Update Policy Success',
+  props<{ policy: any }>()
+);
+
+export const updatePolicyFailure = createAction(
+  '[Policy] Update Policy Failure',
+  props<{ error: string }>()
+);

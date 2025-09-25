@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
@@ -10,9 +10,10 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  imports: [ReactiveFormsModule, CommonModule,RouterModule]
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule, RouterModule]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   form: FormGroup;
   showPassword: boolean = false;
   
@@ -31,6 +32,16 @@ export class LoginComponent {
     this.loading$ = this.store.select(selectLoading);
     this.error$ = this.store.select(selectError);
     this.user$ = this.store.select(selectUser);
+  }
+
+  ngOnInit() {
+    // Reset form to ensure clean state
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.showPassword = false;
   }
 
   onSubmit() {

@@ -54,4 +54,27 @@ export class AuthService {
       } as any)
       .pipe(map((res: any) => res.data.login));
   }
+
+  validateToken(token: string) {
+    return this.apollo
+      .query({
+        query: gql`
+          query ValidateToken {
+            me {
+              _id
+              name
+              email
+              role
+              photo
+            }
+          }
+        `,
+        context: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      } as any)
+      .pipe(map((res: any) => res.data.me));
+  }
 }

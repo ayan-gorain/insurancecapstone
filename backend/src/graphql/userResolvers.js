@@ -12,10 +12,22 @@ export const userResolvers = {
   Query: {
     users: async () => await User.find(),
     user: async (_, { _id }) => await User.findById(_id),
+    me: async (_, __, { user }) => {
+      if (!user) {
+        throw new Error("Authentication required");
+      }
+      return user;
+    },
   },
   Mutation: {
     signup: async (_, { input }) => {
       const { name, email, password, role, photo, address } = input;
+      
+      // Restrict signup to only customers
+      if (role && role !== 'customer') {
+        throw new Error("Only customer accounts can be created through signup. Admin and agent accounts must be created by authorized personnel.");
+      }
+      
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         throw new Error("User already exists");
@@ -51,7 +63,7 @@ export const userResolvers = {
         name,
         email,
         passwordHash: hashedPassword,
-        role,
+        role: 'customer', // Force customer role
         photo: photoUrl,
         address,
       });

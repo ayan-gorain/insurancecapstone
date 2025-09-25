@@ -1,0 +1,155 @@
+<div class="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h3 class="text-xl font-semibold text-white">Summary Dashboard</h3>
+    <button (click)="loadSummaryData()" 
+            [disabled]="loading"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center">
+      <svg *ngIf="loading" class="animate-spin h-4 w-4 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      {{ loading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading && !summaryData" class="text-center py-8">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+    <p class="text-gray-400">Loading summary data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="mb-4 p-4 bg-red-500/20 border border-red-400/50 text-red-300 rounded-lg">
+    {{ error }}
+  </div>
+
+  <!-- Summary Cards -->
+  <div *ngIf="summaryData" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <!-- Total Users Card -->
+    <div class="bg-gradient-to-br from-blue-600/20 to-blue-800/20 border border-blue-500/30 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-blue-400 text-sm font-medium">Total Users</p>
+          <p class="text-3xl font-bold text-white">{{ summaryData.users }}</p>
+        </div>
+        <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agents Card -->
+    <div class="bg-gradient-to-br from-purple-600/20 to-purple-800/20 border border-purple-500/30 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-purple-400 text-sm font-medium">Agents</p>
+          <p class="text-3xl font-bold text-white">{{ summaryData.agents }}</p>
+        </div>
+        <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policies Card -->
+    <div class="bg-gradient-to-br from-green-600/20 to-green-800/20 border border-green-500/30 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-green-400 text-sm font-medium">Policies</p>
+          <p class="text-3xl font-bold text-white">{{ summaryData.policies }}</p>
+        </div>
+        <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Claims Card -->
+    <div class="bg-gradient-to-br from-orange-600/20 to-orange-800/20 border border-orange-500/30 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-orange-400 text-sm font-medium">Total Claims</p>
+          <p class="text-3xl font-bold text-white">{{ getTotalClaims() }}</p>
+        </div>
+        <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Claims Status Cards -->
+    <div class="bg-gradient-to-br from-yellow-600/20 to-yellow-800/20 border border-yellow-500/30 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-yellow-400 text-sm font-medium">Pending Claims</p>
+          <p class="text-3xl font-bold text-white">{{ summaryData.claimsPending }}</p>
+        </div>
+        <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gradient-to-br from-red-600/20 to-red-800/20 border border-red-500/30 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-red-400 text-sm font-medium">Rejected Claims</p>
+          <p class="text-3xl font-bold text-white">{{ summaryData.claimsRejected }}</p>
+        </div>
+        <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Claims Overview -->
+  <div *ngIf="summaryData" class="mt-8 bg-slate-700/50 rounded-lg p-6 border border-slate-600/50">
+    <h4 class="text-lg font-semibold text-white mb-4">Claims Overview</h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Approval Rate -->
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-400">{{ getClaimsApprovalRate() }}%</div>
+        <div class="text-sm text-gray-400">Approval Rate</div>
+      </div>
+      
+      <!-- Approved Claims -->
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-400">{{ summaryData.claimsApproved }}</div>
+        <div class="text-sm text-gray-400">Approved Claims</div>
+      </div>
+      
+      <!-- Processing Status -->
+      <div class="text-center">
+        <div class="text-2xl font-bold text-yellow-400">{{ summaryData.claimsPending }}</div>
+        <div class="text-sm text-gray-400">Under Review</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="mt-6">
+      <div class="flex justify-between text-sm text-gray-400 mb-2">
+        <span>Claims Processing</span>
+        <span>{{ getClaimsApprovalRate() }}% approved</span>
+      </div>
+      <div class="w-full bg-slate-600 rounded-full h-2">
+        <div class="bg-gradient-to-r from-green-500 to-green-400 h-2 rounded-full transition-all duration-300" 
+             [style.width.%]="getClaimsApprovalRate()"></div>
+      </div>
+    </div>
+  </div>
+</div>
