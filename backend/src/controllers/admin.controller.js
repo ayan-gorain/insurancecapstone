@@ -159,27 +159,150 @@ export const listClaims = async (req, res) => {
 export const updateClaimStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, notes } = req.body;
+    const { status, notes, approvedAmount } = req.body;
     
     if (!['PENDING', 'APPROVED', 'REJECTED'].includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
     
-    const claim = await Claim.findByIdAndUpdate(
-      id, 
-      { status, decisionNotes: notes, decidedByAgentId: req.user._id }, 
-      { new: true }
-    );
-    
-    if (!claim) {
+    // Get the claim first to validate
+    const existingClaim = await Claim.findById(id).populate('userId', 'name email');
+    if (!existingClaim) {
       return res.status(404).json({ message: "Claim not found" });
     }
-
-    await AuditLog.create({ action: "UPDATE_CLAIM", actorId: req.user._id, details: { claimId: claim._id, status } });
-    res.json(claim);
+    
+    // Validate claim eligibility
+    if (status === 'APPROVED') {
+      // Check if policy is still active
+      const userPolicy = await UserPolicy.findById(existingClaim.userPolicyId);
+      if (!userPolicy || userPolicy.status !== 'ACTIVE') {
+        return res.status(400).json({ message: "Cannot approve claim for inactive policy" });
+      }
+      
+      // Check if incident date is within policy period
+      if (existingClaim.incidentDate < userPolicy.startDate || existingClaim.incidentDate > userPolicy.endDate) {
+        return res.status(400).json({ message: "Incident date is outside policy period" });
+      }
+      
+      // Validate approved amount
+      if (approvedAmount && approvedAmount > existingClaim.amountClaimed) {
+        return res.status(400).json({ message: "Approved amount cannot exceed claimed amount" });
+      }
+    }
+    
+    const updateData = {
+      status,
+      decisionNotes: notes,
+      decidedByAgentId: req.user._id,
+      decidedAt: new Date()
+    };
+    
+    // Add approved amount if provided
+    if (approvedAmount) {
+      updateData.approvedAmount = approvedAmount;
+    }
+    
+    const claim = await Claim.findByIdAndUpdate(id, updateData, { new: true })
+      .populate('userId', 'name email')
+      .populate('userPolicyId', 'startDate endDate premiumPaid')
+      .populate('userPolicyId.policyProductId', 'title description');
+    
+    // Log the action with more details
+    await AuditLog.create({ 
+      action: "UPDATE_CLAIM", 
+      actorId: req.user._id, 
+      details: { 
+        claimId: claim._id, 
+        status,
+        customerName: existingClaim.userId.name,
+        customerEmail: existingClaim.userId.email,
+        claimedAmount: existingClaim.amountClaimed,
+        approvedAmount: approvedAmount || null,
+        notes: notes || null
+      } 
+    });
+    
+    res.json({
+      message: `Claim ${status.toLowerCase()} successfully`,
+      claim: claim
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update claim" });
+  }
+};
+
+// Get claims assigned to specific agent
+export const getAgentClaims = async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    
+    // Get customers assigned to this agent
+    const customers = await User.find({ 
+      role: 'customer', 
+      assignedAgentId: agentId 
+    }).select('_id');
+    
+    const customerIds = customers.map(c => c._id);
+    
+    const claims = await Claim.find({ userId: { $in: customerIds } })
+      .populate('userId', 'name email')
+      .populate('userPolicyId', 'startDate endDate premiumPaid')
+      .populate('userPolicyId.policyProductId', 'title description')
+      .populate('decidedByAgentId', 'name email')
+      .sort({ createdAt: -1 });
+    
+    res.json(claims);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch agent claims" });
+  }
+};
+
+// Get claim analytics for agents
+export const getClaimAnalytics = async (req, res) => {
+  try {
+    const totalClaims = await Claim.countDocuments();
+    const pendingClaims = await Claim.countDocuments({ status: 'PENDING' });
+    const approvedClaims = await Claim.countDocuments({ status: 'APPROVED' });
+    const rejectedClaims = await Claim.countDocuments({ status: 'REJECTED' });
+    
+    const totalClaimedAmount = await Claim.aggregate([
+      { $group: { _id: null, total: { $sum: "$amountClaimed" } } }
+    ]);
+    
+    const totalApprovedAmount = await Claim.aggregate([
+      { $match: { status: 'APPROVED' } },
+      { $group: { _id: null, total: { $sum: "$approvedAmount" } } }
+    ]);
+    
+    const claimsByMonth = await Claim.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" }
+          },
+          count: { $sum: 1 },
+          totalAmount: { $sum: "$amountClaimed" }
+        }
+      },
+      { $sort: { "_id.year": -1, "_id.month": -1 } },
+      { $limit: 12 }
+    ]);
+    
+    res.json({
+      totalClaims,
+      pendingClaims,
+      approvedClaims,
+      rejectedClaims,
+      totalClaimedAmount: totalClaimedAmount[0]?.total || 0,
+      totalApprovedAmount: totalApprovedAmount[0]?.total || 0,
+      claimsByMonth
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch claim analytics" });
   }
 };
 

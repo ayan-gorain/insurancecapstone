@@ -9,6 +9,8 @@ import {
   createAgent,
   listClaims,
   updateClaimStatus,
+  getAgentClaims,
+  getClaimAnalytics,
   listAuditLogs,
   summary,
   assignAgentToCustomer,
@@ -34,7 +36,8 @@ router.get("/agents/:agentId/customers", getAgentCustomers);
 
 router.get("/claims", listClaims);
 router.put("/claims/:id/status", updateClaimStatus);
-
+router.get("/agents/:agentId/claims", getAgentClaims);
+router.get("/claims-analytics", getClaimAnalytics);
 
 router.get("/audit", listAuditLogs);
 router.get("/summary", summary);
