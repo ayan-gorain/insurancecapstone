@@ -13,6 +13,9 @@ import { routes } from './app.routes';
 import { authReducer } from './store/auth/auth.reducer';
 import { AuthEffects } from './store/auth/auth.effects';
 import { AuthService } from './services/auth.service';
+import { policyReducer } from './store/policy/policy.reducer';
+import { PolicyEffects } from './store/policy/policy.effects';
+import { PolicyService } from './services/policy.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,13 +33,15 @@ export const appConfig: ApplicationConfig = {
       };
     }),
     provideStore({
-      auth: authReducer
+      auth: authReducer,
+      policy: policyReducer
     }),
-    provideEffects([AuthEffects]),
+    provideEffects([AuthEffects, PolicyEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,
     }),
-    AuthService
+    AuthService,
+    PolicyService
   ]
 };

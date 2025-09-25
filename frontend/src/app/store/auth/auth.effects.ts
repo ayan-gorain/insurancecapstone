@@ -49,10 +49,23 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.loginSuccess, AuthActions.signupSuccess),
-        tap(({ user }) => {
+        tap(({ user, token }) => {
+          localStorage.setItem('token', token);
           if (user.role === 'admin') this.router.navigate(['/admin']);
           else if (user.role === 'agent') this.router.navigate(['/agent']);
           else this.router.navigate(['/customer']);
+        })
+      ),
+    { dispatch: false }
+  );
+
+  redirectAfterLogout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          localStorage.removeItem('token');
+          this.router.navigate(['/login']);
         })
       ),
     { dispatch: false }

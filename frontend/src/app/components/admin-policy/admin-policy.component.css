@@ -1,0 +1,81 @@
+/* Custom styles for admin policy component */
+.image-upload-area {
+  transition: all 0.3s ease;
+}
+
+.image-upload-area:hover {
+  transform: scale(1.02);
+}
+
+.form-input:focus {
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+}
+
+.textarea-resize {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Animation for success message */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-message {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Button hover effects */
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(147, 51, 234, 0.3);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+}
+
+/* Form validation styles */
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Image preview styles */
+.image-preview {
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .flex.gap-4 {
+    flex-direction: column;
+  }
+  
+  .flex.gap-4 button {
+    width: 100%;
+  }
+}
