@@ -7,6 +7,8 @@ import { ApolloServer } from "@apollo/server";
 import { userTypeDefs } from "./graphql/userTypeDefs.js";
 import { userResolvers } from "./graphql/userResolvers.js";
 import adminRoutes from "./routes/admin.routes.js";
+import customerRoutes from "./routes/customer.route.js";
+import agentRoutes from "./routes/agent.routes.js";
 import { authMiddleware } from "./authMiddleware.js";
 
 dotenv.config();
@@ -16,6 +18,8 @@ app.use(cors());
 app.use(express.json({limit:"70mb"}));
 
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/customer", customerRoutes);
+app.use("/api/v1/agent", agentRoutes);
 
 const server = new ApolloServer({typeDefs:userTypeDefs,resolvers:userResolvers});
 

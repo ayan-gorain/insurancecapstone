@@ -23,3 +23,17 @@ export const isAdmin=async(req,res,next)=>{
     }
     next();
 }
+
+export const isAgent=async(req,res,next)=>{
+    if(req.user.role!=="agent"){
+        return res.status(403).json({message:"Agent access required"});
+    }
+    next();
+}
+
+export const isCustomer=async(req,res,next)=>{
+    if(req.user.role!=="customer"){
+        return res.status(403).json({message:"Customer access required"});
+    }
+    next();
+}
