@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Claim from "../models/Claim.js";
 import cloudinary from "../config/cloudinary.js";
 import AuditLog from "../models/Auditlog.js";
+import bcrypt from 'bcrypt';
 export const createPolicy = async (req, res) => {
   try {
     const { code, title, description, premium, termMonths, minSumInsured, image } = req.body;
@@ -49,6 +50,56 @@ export const listPolicies = async (req, res) => {
   }
 };
 
+export const updatePolicy = async (req, res) => {
+  try {
+    const { policyId } = req.params;
+    const { code, title, description, premium, termMonths, minSumInsured } = req.body;
+
+    const policy = await PolicyProduct.findByIdAndUpdate(
+      policyId,
+      { code, title, description, premium, termMonths, minSumInsured },
+      { new: true, runValidators: true }
+    );
+
+    if (!policy) {
+      return res.status(404).json({ message: "Policy not found" });
+    }
+
+    await AuditLog.create({
+      action: "UPDATE_POLICY",
+      actorId: req.user._id,
+      details: { policyId: policy._id },
+    });
+
+    res.json(policy);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const deletePolicy = async (req, res) => {
+  try {
+    const { policyId } = req.params;
+
+    const policy = await PolicyProduct.findByIdAndDelete(policyId);
+    if (!policy) {
+      return res.status(404).json({ message: "Policy not found" });
+    }
+
+    await AuditLog.create({
+      action: "DELETE_POLICY",
+      actorId: req.user._id,
+      details: { policyId: policy._id },
+    });
+
+    res.json({ message: "Policy deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const listUsers = async (req, res) => {
   try {
     const users = await User.find().select("-passwordHash");
@@ -61,7 +112,7 @@ export const listUsers = async (req, res) => {
 
 export const createAgent = async (req, res) => {
   try {
-    const { name, email, passwordHash } = req.body;
+    const { name, email, password, address, photo } = req.body;
     
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -69,10 +120,26 @@ export const createAgent = async (req, res) => {
       return res.status(400).json({ message: "User with this email already exists" });
     }
     
-    const agent = await User.create({ name, email, passwordHash, role: "agent" });
+    // Hash the password
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+    
+    const agent = await User.create({ 
+      name, 
+      email, 
+      passwordHash, 
+      role: "agent",
+      address: address || "",
+      photo: photo || ""
+    });
 
     await AuditLog.create({ action: "CREATE_AGENT", actorId: req.user._id, details: { agentId: agent._id } });
-    res.status(201).json(agent);
+    
+    // Return agent without password hash
+    const agentResponse = { ...agent.toObject() };
+    delete agentResponse.passwordHash;
+    
+    res.status(201).json(agentResponse);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to create agent" });
@@ -127,6 +194,67 @@ export const listAuditLogs = async (req, res) => {
   }
 };
 
+
+export const assignAgentToCustomer = async (req, res) => {
+  try {
+    const { customerId, agentId } = req.body;
+    
+    // Validate that customer exists and is a customer
+    const customer = await User.findById(customerId);
+    if (!customer || customer.role !== 'customer') {
+      return res.status(400).json({ message: "Invalid customer" });
+    }
+    
+    // Validate that agent exists and is an agent
+    const agent = await User.findById(agentId);
+    if (!agent || agent.role !== 'agent') {
+      return res.status(400).json({ message: "Invalid agent" });
+    }
+    
+    // Update customer with assigned agent
+    const updatedCustomer = await User.findByIdAndUpdate(
+      customerId,
+      { assignedAgentId: agentId },
+      { new: true }
+    ).populate('assignedAgentId', 'name email');
+    
+    console.log('Updated customer:', updatedCustomer);
+    
+    await AuditLog.create({
+      action: "ASSIGN_AGENT",
+      actorId: req.user._id,
+      details: { customerId, agentId }
+    });
+    
+    res.json(updatedCustomer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to assign agent" });
+  }
+};
+
+export const getAgentCustomers = async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    
+    // Validate that agent exists
+    const agent = await User.findById(agentId);
+    if (!agent || agent.role !== 'agent') {
+      return res.status(400).json({ message: "Invalid agent" });
+    }
+    
+    // Get all customers assigned to this agent
+    const customers = await User.find({ 
+      role: 'customer', 
+      assignedAgentId: agentId 
+    }).select('-passwordHash');
+    
+    res.json(customers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch agent customers" });
+  }
+};
 
 export const summary = async (req, res) => {
   try {

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, map, take } from 'rxjs';
-import { selectUser } from '../store/auth/auth.selectors';
+import { Observable, map, take, filter, switchMap } from 'rxjs';
+import { selectUser, selectAuthInitialized } from '../store/auth/auth.selectors';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,11 @@ export class RoleGuard implements CanActivate {
   ): Observable<boolean> {
     const expectedRole = route.data['role'];
     
-    return this.store.select(selectUser).pipe(
+    // Wait for auth initialization to complete
+    return this.store.select(selectAuthInitialized).pipe(
+      filter(initialized => initialized), // Wait until initialization is complete
+      take(1),
+      switchMap(() => this.store.select(selectUser)),
       take(1),
       map(user => {
         if (!user) {

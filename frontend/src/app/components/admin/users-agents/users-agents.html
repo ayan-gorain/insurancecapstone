@@ -1,0 +1,160 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6 text-white">User & Agent Management</h2>
+  
+    <!-- Tab Navigation -->
+    <div class="flex mb-6">
+      <button (click)="showUsers()" 
+              [class.bg-purple-600]="view==='users'"
+              [class.text-white]="view==='users'"
+              [class.bg-slate-800]="view!=='users'"
+              [class.text-gray-300]="view!=='users'"
+              class="px-4 py-2 rounded-l-lg border border-slate-700 font-medium">
+        All Users
+      </button>
+      <button (click)="showAgents()" 
+              [class.bg-purple-600]="view==='agents'"
+              [class.text-white]="view==='agents'"
+              [class.bg-slate-800]="view!=='agents'"
+              [class.text-gray-300]="view!=='agents'"
+              class="px-4 py-2 border-t border-b border-slate-700 font-medium">
+        Agents
+      </button>
+      <button (click)="showAssignments()" 
+              [class.bg-purple-600]="view==='assignments'"
+              [class.text-white]="view==='assignments'"
+              [class.bg-slate-800]="view!=='assignments'"
+              [class.text-gray-300]="view!=='assignments'"
+              class="px-4 py-2 rounded-r-lg border border-slate-700 font-medium">
+        Assign Agents
+      </button>
+    </div>
+  
+    <!-- Loading State -->
+    <div *ngIf="loading$ | async" class="text-center py-8">
+      <div class="text-blue-400">Loading...</div>
+    </div>
+  
+    <!-- Users Table -->
+    <div *ngIf="view==='users' && !(loading$ | async)" class="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden">
+      <div class="p-4 border-b border-slate-700">
+        <h3 class="text-lg font-semibold text-white">All Users</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-slate-700/50">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Name</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Email</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Role</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700">
+            <tr *ngFor="let user of (users$ | async)" class="hover:bg-slate-700/30">
+              <td class="px-4 py-3 text-white font-medium">{{ user.name }}</td>
+              <td class="px-4 py-3 text-gray-300">{{ user.email }}</td>
+              <td class="px-4 py-3">
+                <span [class]="getRoleBadgeClass(user.role)" class="px-2 py-1 rounded text-xs font-medium">
+                  {{ user.role | titlecase }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Agents Table -->
+    <div *ngIf="view==='agents' && !(loading$ | async)" class="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden">
+      <div class="p-4 border-b border-slate-700">
+        <h3 class="text-lg font-semibold text-white">Insurance Agents</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-slate-700/50">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Name</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Email</th>
+              <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Customers</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700">
+            <tr *ngFor="let agent of (agents$ | async)" class="hover:bg-slate-700/30">
+              <td class="px-4 py-3 text-white font-medium">{{ agent.name }}</td>
+              <td class="px-4 py-3 text-gray-300">{{ agent.email }}</td>
+              <td class="px-4 py-3 text-gray-300">{{ getAgentCustomerCount(agent._id) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Agent Assignment Section -->
+    <div *ngIf="view==='assignments' && !(loading$ | async)" class="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 p-6">
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-white mb-2">Assign Agent to Customer</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Customer Selection -->
+        <div class="bg-slate-700/50 rounded-lg p-4">
+          <h4 class="text-md font-medium text-white mb-4">Select Customer</h4>
+          <div class="space-y-2">
+            <div *ngFor="let customer of getCustomers()" 
+                 (click)="selectCustomer(customer)"
+                 [class.bg-purple-600]="selectedCustomer?._id === customer._id"
+                 [class.bg-slate-600]="selectedCustomer?._id !== customer._id"
+                 class="p-3 rounded cursor-pointer hover:bg-slate-600">
+              <div class="text-white font-medium">{{ customer.name }}</div>
+              <div class="text-gray-300 text-sm">{{ customer.email }}</div>
+              <div class="text-gray-400 text-xs">Current Agent: {{ getCustomerAgent(customer._id) || 'Unassigned' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agent Selection -->
+        <div class="bg-slate-700/50 rounded-lg p-4">
+          <h4 class="text-md font-medium text-white mb-4">Select Agent</h4>
+          <div class="space-y-2">
+            <div *ngFor="let agent of (agents$ | async)" 
+                 (click)="selectAgent(agent)"
+                 [class.bg-purple-600]="selectedAgent?._id === agent._id"
+                 [class.bg-slate-600]="selectedAgent?._id !== agent._id"
+                 class="p-3 rounded cursor-pointer hover:bg-slate-600">
+              <div class="text-white font-medium">{{ agent.name }}</div>
+              <div class="text-gray-300 text-sm">{{ agent.email }}</div>
+              <div class="text-gray-400 text-xs">Customers: {{ getAgentCustomerCount(agent._id) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignment Button -->
+      <div class="mt-6 text-center">
+        <button (click)="assignAgentToCustomer()" 
+                [disabled]="!selectedCustomer || !selectedAgent"
+                class="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+          Assign Agent to Customer
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty States -->
+    <div *ngIf="(users$ | async)?.length === 0 && view==='users' && !(loading$ | async)" 
+         class="text-center py-8">
+      <div class="text-gray-400">
+        <p class="text-lg font-medium mb-2">No users found</p>
+        <p class="text-gray-500">No users have been registered yet.</p>
+      </div>
+    </div>
+
+    <div *ngIf="(agents$ | async)?.length === 0 && view==='agents' && !(loading$ | async)" 
+         class="text-center py-8">
+      <div class="text-gray-400">
+        <p class="text-lg font-medium mb-2">No agents found</p>
+        <p class="text-gray-500">No agents have been created yet.</p>
+      </div>
+    </div>
+  </div>
+</div>
+  

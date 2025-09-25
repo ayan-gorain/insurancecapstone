@@ -1,0 +1,195 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-slate-800/90 backdrop-blur-sm border-r border-slate-700 flex flex-col">
+    <!-- Sidebar Header -->
+    <div class="p-6 border-b border-slate-700">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-lg">A</span>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-white">Admin Panel</h1>
+          <p class="text-gray-400 text-sm">Insurance System</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 p-4">
+      <ul class="space-y-2">
+        <li>
+          <a routerLink="/admin" 
+             routerLinkActive="bg-purple-600 text-white" 
+             [routerLinkActiveOptions]="{exact: true}"
+             class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/policy" 
+             routerLinkActive="bg-purple-600 text-white"
+             class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Add Policy
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/policies" 
+             routerLinkActive="bg-purple-600 text-white"
+             class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+            Manage Policies
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/view-users-agents" 
+             routerLinkActive="bg-purple-600 text-white"
+             class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
+            Users & Agents
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/create-agent" 
+             routerLinkActive="bg-purple-600 text-white"
+             class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
+            Create Agent
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/audit-logs" 
+             routerLinkActive="bg-purple-600 text-white"
+             class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Audit Logs
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/summary" 
+             routerLinkActive="bg-purple-600 text-white"
+             class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-slate-700 hover:text-white transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Summary Dashboard
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- User Info & Logout -->
+    <div class="p-4 border-t border-slate-700">
+      <div *ngIf="user$ | async as user" class="flex items-center space-x-3 mb-4">
+        <!-- User Photo or Initial -->
+        <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
+          <img *ngIf="user.photo && user.photo.trim()" 
+               [src]="user.photo" 
+               [alt]="user.name"
+               (error)="onImageError($event)"
+               class="w-full h-full object-cover">
+          <div *ngIf="!user.photo || !user.photo.trim()" 
+               class="w-full h-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center">
+            <span class="text-white text-sm font-medium">{{ user.name?.charAt(0)?.toUpperCase() }}</span>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white text-sm font-medium truncate">{{ user.name }}</p>
+          <p class="text-gray-400 text-xs">{{ user.role | titlecase }}</p>
+        </div>
+      </div>
+      <button (click)="logout()" 
+              class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col">
+    <!-- Top Header -->
+    <header class="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700 px-6 py-4">
+      <h2 class="text-2xl font-bold text-white">Welcome back, Admin!</h2>
+      <p class="text-gray-400">Manage your insurance system from this central dashboard.</p>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-6">
+      <router-outlet></router-outlet>
+      
+      <!-- Default Dashboard Content (when no route is active) -->
+      <div *ngIf="!isRouteActive" class="text-center py-12">
+        <div class="max-w-md mx-auto">
+          <div class="w-24 h-24 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-white mb-4">Admin Dashboard</h3>
+          <p class="text-gray-400 mb-8">Use the sidebar to navigate to different sections of your admin panel.</p>
+          
+          <!-- Quick Actions -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <button routerLink="/admin/policy" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Add New Policy
+            </button>
+            <button routerLink="/admin/policies" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+              </svg>
+              Manage Policies
+            </button>
+            <button routerLink="/admin/summary" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+              View Summary
+            </button>
+            <button routerLink="/admin/audit-logs" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-all">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Audit Logs
+            </button>
+            <button routerLink="/admin/view-users-agents" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+              Users & Agents
+            </button>
+            <button routerLink="/admin/create-agent" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 transition-all">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+              Create Agent
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

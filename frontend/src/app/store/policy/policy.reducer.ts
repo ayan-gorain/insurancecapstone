@@ -53,5 +53,39 @@ export const policyReducer = createReducer(
     ...state,
     error: null,
     createdPolicy: null
+  })),
+  //delete policy
+  on(PolicyActions.deletePolicy, (state) => ({
+    ...state,
+    loading:true,
+    error:null
+  })),
+  on(PolicyActions.deletePolicySuccess, (state, { policyId }) => ({
+    ...state,
+    loading: false,
+    error: null,
+    policies: state.policies.filter(policy => policy._id !== policyId)
+  })),
+  on(PolicyActions.deletePolicyFailure,(state,{error})=>({
+    ...state,
+    loading:false,
+    error:error
+  })),
+  //update policy
+  on(PolicyActions.updatePolicy, (state)=>({
+    ...state,
+    loading:true,
+    error:null
+  })),
+  on(PolicyActions.updatePolicySuccess, (state, { policy }) => ({
+    ...state,
+    loading:false,
+    error:null,
+    policies:state.policies.map(p=>p._id===policy._id?policy:p)
+  })),
+  on(PolicyActions.updatePolicyFailure, (state, { error }) => ({
+    ...state,
+    loading:false,
+    error:error
   }))
 );

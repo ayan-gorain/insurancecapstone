@@ -31,3 +31,12 @@ export const loginFailure = createAction(
 );
 
 export const logout = createAction('[Auth] Logout');
+
+export const initializeAuth = createAction('[Auth] Initialize Auth');
+
+export const initializeAuthSuccess = createAction(
+  '[Auth] Initialize Auth Success',
+  props<{ user: any; token: string }>()
+);
+
+export const initializeAuthFailure = createAction('[Auth] Initialize Auth Failure');

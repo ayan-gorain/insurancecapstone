@@ -26,4 +26,13 @@ export class CustomerDashboardComponent implements OnInit {
   logout(): void {
     this.store.dispatch(AuthActions.logout());
   }
+
+  onImageError(event: any): void {
+    // Hide the image and show the fallback initial
+    event.target.style.display = 'none';
+    const fallback = event.target.nextElementSibling;
+    if (fallback) {
+      fallback.style.display = 'flex';
+    }
+  }
 }

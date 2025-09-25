@@ -15,8 +15,17 @@
         
         <div class="flex items-center space-x-4">
           <div *ngIf="user$ | async as user" class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-              <span class="text-white text-sm font-medium">{{ user.name?.charAt(0)?.toUpperCase() }}</span>
+            <!-- User Photo or Initial -->
+            <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
+              <img *ngIf="user.photo && user.photo.trim()" 
+                   [src]="user.photo" 
+                   [alt]="user.name"
+                   (error)="onImageError($event)"
+                   class="w-full h-full object-cover">
+              <div *ngIf="!user.photo || !user.photo.trim()" 
+                   class="w-full h-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+                <span class="text-white text-sm font-medium">{{ user.name?.charAt(0)?.toUpperCase() }}</span>
+              </div>
             </div>
             <div class="text-right">
               <p class="text-white text-sm font-medium">{{ user.name }}</p>
