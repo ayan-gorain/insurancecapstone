@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 import { AdminDashboardComponent } from './admin-dashboard.component';
 
@@ -11,11 +12,17 @@ describe('AdminDashboardComponent', () => {
 
   beforeEach(async () => {
     mockStore = jasmine.createSpyObj('Store', ['select', 'dispatch']);
+    const mockActivatedRoute = {
+      snapshot: { params: {}, queryParams: {} },
+      params: of({}),
+      queryParams: of({})
+    };
 
     await TestBed.configureTestingModule({
       imports: [AdminDashboardComponent],
       providers: [
-        { provide: Store, useValue: mockStore }
+        { provide: Store, useValue: mockStore },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ]
     }).compileComponents();
 

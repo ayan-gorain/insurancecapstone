@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Store } from '@ngrx/store';
+import { of } from 'rxjs';
 
 import { PendingClaims } from './pending-claims';
 
@@ -7,8 +9,14 @@ describe('PendingClaims', () => {
   let fixture: ComponentFixture<PendingClaims>;
 
   beforeEach(async () => {
+    const storeSpy = jasmine.createSpyObj('Store', ['select', 'dispatch']);
+    storeSpy.select.and.returnValue(of([]));
+
     await TestBed.configureTestingModule({
-      imports: [PendingClaims]
+      imports: [PendingClaims],
+      providers: [
+        { provide: Store, useValue: storeSpy }
+      ]
     })
     .compileComponents();
 
