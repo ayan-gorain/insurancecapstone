@@ -1,0 +1,32 @@
+services:
+  # Backend API Service
+  - type: web
+    name: insurance-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: echo "Building backend with Docker"
+    startCommand: echo "Starting backend with Docker"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+    healthCheckPath: /api/v1/admin/health
+
+databases:
+  # MongoDB Database
+  - name: insurance-mongodb
+    databaseName: insurance_db
+    user: insurance_user
+    plan: starter

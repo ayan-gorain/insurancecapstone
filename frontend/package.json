@@ -4,9 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
+    "build:dev": "ng build --configuration development",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "docker:build": "docker build -f Dockerfile.dev -t insurance-frontend .",
+    "docker:run": "docker run -p 4200:4200 insurance-frontend",
+    "docker:dev": "docker-compose --profile dev up frontend-dev"
   },
   "prettier": {
     "printWidth": 100,
