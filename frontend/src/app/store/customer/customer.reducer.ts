@@ -99,6 +99,24 @@ export const customerReducer = createReducer(
     error
   })),
 
+  // Submit claim without policy
+  on(CustomerActions.submitClaimWithoutPolicy, (state) => ({
+    ...state,
+    loading: true,
+    error: null
+  })),
+  on(CustomerActions.submitClaimWithoutPolicySuccess, (state, { claim }) => ({
+    ...state,
+    loading: false,
+    myClaims: [...state.myClaims, claim],
+    error: null
+  })),
+  on(CustomerActions.submitClaimWithoutPolicyFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
+
   // Load my claims
   on(CustomerActions.loadMyClaims, (state) => ({
     ...state,

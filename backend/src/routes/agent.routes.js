@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware } from "../authMiddleware.js";
+import { authMiddleware, isAgent } from "../authMiddleware.js";
 import {
   getMyCustomers,
   getMyCustomersClaims,
@@ -15,8 +15,9 @@ import {
 
 const router = express.Router();
 
-// All agent routes require authentication
+// All agent routes require authentication and agent role
 router.use(authMiddleware);
+router.use(isAgent);
 
 // Agent profile routes
 router.get("/profile", getMyProfile);

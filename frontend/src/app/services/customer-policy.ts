@@ -56,6 +56,15 @@ export class CustomerPolicy {
     return this.http.post(`${this.baseUrl}/customer/claims`, claimData, { headers });
   }
 
+  submitClaimWithoutPolicy(claimData: any): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    return this.http.post(`${this.baseUrl}/customer/claims/without-policy`, claimData, { headers });
+  }
+
   getMyClaims(): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = {
@@ -81,6 +90,15 @@ export class CustomerPolicy {
       'Content-Type': 'application/json'
     };
     return this.http.get(`${this.baseUrl}/customer/claims-stats`, { headers });
+  }
+
+  checkAgentAssignment(): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    return this.http.get(`${this.baseUrl}/customer/agent-assignment`, { headers });
   }
 
 }

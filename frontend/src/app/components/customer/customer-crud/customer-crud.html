@@ -46,7 +46,7 @@
         
         <div class="flex justify-between items-start mb-4">
           <h3 class="text-xl font-bold text-gray-800">{{ policy.name }}</h3>
-          <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">${{ policy.premium }}/month</span>
+          <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">₹{{ policy.premium }}/month</span>
         </div>
         <div class="space-y-2 mb-4">
           <p class="text-gray-700"><strong>Type:</strong> {{ policy.type }}</p>
@@ -163,7 +163,7 @@
           </span>
         </div>
         <div class="space-y-2 mb-4">
-          <p class="text-gray-700"><strong>Premium:</strong> ${{ policy.premiumPaid }}</p>
+          <p class="text-gray-700"><strong>Premium:</strong> ₹{{ policy.premiumPaid }}</p>
           <p class="text-gray-700"><strong>Start Date:</strong> {{ policy.startDate | date }}</p>
           <p class="text-gray-700"><strong>End Date:</strong> {{ policy.endDate | date }}</p>
           <p class="text-gray-700"><strong>Nominee:</strong> {{ policy.nominee }}</p>

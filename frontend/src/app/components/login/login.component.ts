@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angula
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 import * as AuthActions from '../../store/auth/auth.actions';
 import { selectLoading, selectError, selectUser } from '../../store/auth/auth.selectors';
 import { RouterModule } from '@angular/router';
@@ -16,13 +17,14 @@ import { RouterModule } from '@angular/router';
 export class LoginComponent implements OnInit {
   form: FormGroup;
   showPassword: boolean = false;
+  showWelcomeMessage: boolean = false;
   
   // Observable properties for state management
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
   user$: Observable<any | null>;
 
-  constructor(private fb: FormBuilder, private store: Store) {
+  constructor(private fb: FormBuilder, private store: Store, private router: Router) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -35,6 +37,18 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Check if user is already logged in and redirect
+    this.user$.subscribe(user => {
+      if (user && !this.showWelcomeMessage) {
+        // User is already logged in, redirect to appropriate dashboard
+        if (user.role === 'admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/customer']);
+        }
+      }
+    });
+    
     // Reset form to ensure clean state
     this.resetForm();
   }
@@ -47,6 +61,7 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       const { email, password } = this.form.value;
+      this.showWelcomeMessage = true; // Show welcome message after successful login
       this.store.dispatch(AuthActions.login({ email: email!, password: password! }));
     }
   }

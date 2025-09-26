@@ -22,6 +22,9 @@ import { AppInitializerService, initializeApp } from './services/app-initializer
 import { CustomerPolicy } from './services/customer-policy';
 import { CustomerEffects } from './store/customer/customer.effects';
 import { customerReducer } from './store/customer/customer.reducer';
+import { AgentEffects } from './store/agent/agent.effects';
+import { agentReducer } from './store/agent/agent.reducer';
+import { AgentService } from './services/agent';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -42,9 +45,10 @@ export const appConfig: ApplicationConfig = {
       auth: authReducer,
       policy: policyReducer,
       users: userReducer,
-      customer: customerReducer
+      customer: customerReducer,
+      agent: agentReducer
     }),
-    provideEffects([AuthEffects, PolicyEffects, UserEffects, CustomerEffects]),
+    provideEffects([AuthEffects, PolicyEffects, UserEffects, CustomerEffects, AgentEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,
@@ -58,6 +62,7 @@ export const appConfig: ApplicationConfig = {
     AuthService,
     PolicyService,
     AppInitializerService,
-    CustomerPolicy
+    CustomerPolicy,
+    AgentService
   ]
 };

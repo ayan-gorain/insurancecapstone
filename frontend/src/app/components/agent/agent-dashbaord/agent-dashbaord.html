@@ -1,0 +1,164 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg flex flex-col">
+    <!-- Sidebar Header -->
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-800">Agent Portal</h1>
+          <p class="text-gray-600 text-sm">Insurance System</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 p-4">
+      <ul class="space-y-2">
+        <li>
+          <a routerLink="/agent" 
+             routerLinkActive="bg-blue-100 text-blue-600" 
+             [routerLinkActiveOptions]="{exact: true}"
+             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a routerLink="/agent/customers" 
+             routerLinkActive="bg-blue-100 text-blue-600"
+             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
+            My Customers
+          </a>
+        </li>
+        <li>
+          <a routerLink="/agent/pending-claims" 
+             routerLinkActive="bg-blue-100 text-blue-600"
+             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Pending Claims
+          </a>
+        </li>
+        <li>
+          <a routerLink="/agent/stats" 
+             routerLinkActive="bg-blue-100 text-blue-600"
+             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Statistics
+          </a>
+        </li>
+        <li>
+          <a routerLink="/agent/profile" 
+             routerLinkActive="bg-blue-100 text-blue-600"
+             class="flex items-center px-4 py-3 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+            Profile
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col">
+    <!-- Top Header -->
+    <header class="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-sm flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Welcome back, Agent!</h2>
+        <p class="text-gray-600">Manage your customers and review claims from this central dashboard.</p>
+      </div>
+      
+      <!-- User Info & Logout -->
+      <div class="flex items-center space-x-4">
+        <div *ngIf="user$ | async as user" class="flex items-center space-x-3">
+          <!-- User Photo or Initial -->
+          <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
+            <img *ngIf="user.photo && user.photo.trim()" 
+                 [src]="user.photo" 
+                 [alt]="user.name"
+                 (error)="onImageError($event)"
+                 class="w-full h-full object-cover">
+            <div *ngIf="!user.photo || !user.photo.trim()" 
+                 class="w-full h-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+              <span class="text-white text-sm font-medium">{{ user.name?.charAt(0)?.toUpperCase() }}</span>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <p class="text-gray-800 text-sm font-medium">{{ user.name }}</p>
+            <p class="text-gray-600 text-xs">{{ user.role | titlecase }}</p>
+          </div>
+        </div>
+        <button (click)="logout()" 
+                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-6">
+      <router-outlet></router-outlet>
+      
+      <!-- Default Dashboard Content (when no route is active) -->
+      <div *ngIf="router.url === '/agent'" class="text-center py-12">
+        <div class="max-w-md mx-auto">
+          <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Agent Dashboard</h3>
+          <p class="text-gray-600 mb-8">Use the sidebar to navigate to different sections of your agent portal.</p>
+          
+          <!-- Quick Actions -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <button routerLink="/agent/customers" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all shadow-lg">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+              My Customers
+            </button>
+            <button routerLink="/agent/pending-claims" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Pending Claims
+            </button>
+            <button routerLink="/agent/stats" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all shadow-lg">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+              Statistics
+            </button>
+            <button routerLink="/agent/profile" 
+                    class="flex items-center justify-center px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:from-indigo-600 hover:to-purple-600 transition-all shadow-lg">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              My Profile
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

@@ -52,6 +52,7 @@ export class AuthEffects {
         tap(({ user, token }) => {
           localStorage.setItem('token', token);
           if (user.role === 'admin') this.router.navigate(['/admin']);
+          else if (user.role === 'agent') this.router.navigate(['/agent']);
           else this.router.navigate(['/customer']);
         })
       ),

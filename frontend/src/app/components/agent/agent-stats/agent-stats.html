@@ -1,0 +1,219 @@
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Statistics & Analytics</h1>
+    <p class="text-gray-600">View your performance metrics and claim statistics</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-red-800">Error loading statistics</h3>
+        <div class="mt-2 text-sm text-red-700">{{ error }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Grid -->
+  <div *ngIf="!(loading$ | async)" class="space-y-8">
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" *ngIf="dashboardStats$ | async as stats">
+      <!-- Total Customers -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Total Customers</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ stats.customersCount }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Claims -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Pending Claims</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ stats.pendingCount }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approved Claims -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Approved Claims</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ stats.approvedCount }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Rate -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">Success Rate</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ stats.successRate }}%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Claims Distribution -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Claims by Status -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Claims by Status</h3>
+        </div>
+        <div class="p-6" *ngIf="claimsByStatus$ | async as claimsByStatus">
+          <div class="space-y-4">
+            <!-- Approved Claims -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                <span class="text-sm font-medium text-gray-700">Approved</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-500">{{ claimsByStatus.approved.length }}</span>
+                <span class="text-xs text-gray-400">
+                  ({{ getPercentage(claimsByStatus.approved.length, claimsByStatus.approved.length + claimsByStatus.rejected.length + claimsByStatus.pending.length) }}%)
+                </span>
+              </div>
+            </div>
+
+            <!-- Rejected Claims -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
+                <span class="text-sm font-medium text-gray-700">Rejected</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-500">{{ claimsByStatus.rejected.length }}</span>
+                <span class="text-xs text-gray-400">
+                  ({{ getPercentage(claimsByStatus.rejected.length, claimsByStatus.approved.length + claimsByStatus.rejected.length + claimsByStatus.pending.length) }}%)
+                </span>
+              </div>
+            </div>
+
+            <!-- Pending Claims -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                <span class="text-sm font-medium text-gray-700">Pending</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-500">{{ claimsByStatus.pending.length }}</span>
+                <span class="text-xs text-gray-400">
+                  ({{ getPercentage(claimsByStatus.pending.length, claimsByStatus.approved.length + claimsByStatus.rejected.length + claimsByStatus.pending.length) }}%)
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Customer -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Top Customer</h3>
+        </div>
+        <div class="p-6" *ngIf="topCustomer$ | async as topCustomer; else noTopCustomer">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-semibold text-xl">{{ topCustomer.customerId?.charAt(0) || 'C' }}</span>
+            </div>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">Customer #{{ topCustomer.customerId?.slice(-6) }}</h4>
+            <p class="text-3xl font-bold text-blue-600 mb-2">{{ topCustomer.claimCount }}</p>
+            <p class="text-sm text-gray-500">Total Claims</p>
+          </div>
+        </div>
+        <ng-template #noTopCustomer>
+          <div class="p-6 text-center">
+            <p class="text-gray-500">No customer data available</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-lg shadow-md border border-gray-200">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Recent Claims Activity</h3>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4" *ngIf="recentClaims$ | async as recentClaims; else noRecentClaims">
+          <div *ngFor="let claim of recentClaims" class="flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center"
+                   [class]="claim.status === 'APPROVED' ? 'bg-green-100' : 
+                            claim.status === 'REJECTED' ? 'bg-red-100' : 'bg-orange-100'">
+                <svg class="w-4 h-4" 
+                     [class]="claim.status === 'APPROVED' ? 'text-green-600' : 
+                              claim.status === 'REJECTED' ? 'text-red-600' : 'text-orange-600'"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getStatusIcon(claim.status)"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900">
+                Claim #{{ claim._id?.slice(-6) }} {{ claim.status === 'APPROVED' ? 'approved' : 
+                                                         claim.status === 'REJECTED' ? 'rejected' : 'submitted' }}
+                <span *ngIf="claim.userId?.name">for {{ claim.userId.name }}</span>
+              </p>
+              <p class="text-sm text-gray-500">{{ claim.createdAt | date:'medium' }}</p>
+            </div>
+            <div class="flex-shrink-0">
+              <span class="text-sm font-medium text-gray-900">{{ formatCurrency(claim.amount) }}</span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noRecentClaims>
+          <div class="text-center py-8">
+            <p class="text-gray-500">No recent claims found</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

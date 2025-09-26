@@ -3,12 +3,17 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { Actions, ofType } from '@ngrx/effects';
 import { 
   loadMyClaims,
   loadClaimStats,
-  submitClaim
+  submitClaim,
+  submitClaimWithoutPolicy,
+  submitClaimSuccess,
+  submitClaimWithoutPolicySuccess
 } from '../../../store/customer/customer.actions';
 import { CustomerState } from '../../../store/customer/customer.state';
+import { CustomerPolicy } from '../../../services/customer-policy';
 
 @Component({
   selector: 'app-customer-claims',
@@ -20,29 +25,56 @@ export class CustomerClaimsComponent implements OnInit {
   customerState$: Observable<CustomerState>;
   showClaimForm: boolean = false;
   claimImages: File[] = [];
+  hasAssignedAgent: boolean = false;
+  assignedAgent: any = null;
   
   // Claim form
   claimForm: FormGroup;
 
   constructor(
     private store: Store<{ customer: CustomerState }>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private customerPolicy: CustomerPolicy,
+    private actions$: Actions
   ) {
     this.customerState$ = this.store.select('customer');
     
     // Initialize claim form
     this.claimForm = this.fb.group({
-      userPolicyId: ['', Validators.required],
+      userPolicyId: [''], // Made optional
       incidentDate: ['', Validators.required],
       incidentLocation: ['', Validators.required],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      amount: ['', [Validators.required, Validators.min(1)]]
+      amount: ['', [Validators.required, Validators.min(1)]],
+      policyType: ['GENERAL', Validators.required] // Added policy type field
+    });
+
+    // Listen for successful claim submissions
+    this.actions$.pipe(
+      ofType(submitClaimSuccess, submitClaimWithoutPolicySuccess)
+    ).subscribe(() => {
+      alert('Claim submitted successfully! Your claim has been sent for review.');
     });
   }
 
   ngOnInit(): void {
     this.loadMyClaims();
     this.loadClaimStats();
+    this.checkAgentAssignment();
+  }
+
+  checkAgentAssignment(): void {
+    this.customerPolicy.checkAgentAssignment().subscribe({
+      next: (response) => {
+        this.hasAssignedAgent = response.hasAssignedAgent;
+        this.assignedAgent = response.assignedAgent;
+      },
+      error: (error) => {
+        console.error('Error checking agent assignment:', error);
+        this.hasAssignedAgent = false;
+        this.assignedAgent = null;
+      }
+    });
   }
 
   // Load my claims
@@ -62,6 +94,12 @@ export class CustomerClaimsComponent implements OnInit {
   }
 
   submitClaim(): void {
+    // Check if user has an assigned agent
+    if (!this.hasAssignedAgent) {
+      alert('You cannot submit claims until an agent is assigned to you. Please contact admin to get an agent assigned.');
+      return;
+    }
+
     if (this.claimForm.valid && this.claimImages.length >= 2) {
       const formData = this.claimForm.value;
       
@@ -80,15 +118,18 @@ export class CustomerClaimsComponent implements OnInit {
           images: images
         };
 
-        this.store.dispatch(submitClaim({ claimData }));
+        // Check if user has a policy selected
+        if (formData.userPolicyId && formData.userPolicyId.trim() !== '') {
+          // Submit claim with policy
+          this.store.dispatch(submitClaim({ claimData }));
+        } else {
+          // Submit claim without policy
+          this.store.dispatch(submitClaimWithoutPolicy({ claimData }));
+        }
         
         // Reset form after submission
         this.resetClaimForm();
         this.showClaimForm = false;
-        
-        // Reload claims to show the new one
-        this.loadMyClaims();
-        this.loadClaimStats();
       });
     }
   }

@@ -32,7 +32,11 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     policyId: '',
     startDate: '',
     termMonths: 12,
-    nominee: ''
+    nominee: '',
+    paymentMethod: 'CREDIT_CARD',
+    cardNumber: '',
+    upiId: '',
+    paymentReference: ''
   };
 
   // Purchase animation state
@@ -46,6 +50,40 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   
   // Cancel policy state
   cancellingPolicyId = '';
+
+  // Helper method to get current payment details
+  getCurrentPaymentDetails(): string {
+    switch (this.buyPolicyForm.paymentMethod) {
+      case 'CREDIT_CARD':
+      case 'DEBIT_CARD':
+        return this.buyPolicyForm.cardNumber;
+      case 'BANK_TRANSFER':
+        return this.buyPolicyForm.paymentReference;
+      case 'PAYPAL':
+        return this.buyPolicyForm.upiId;
+      case 'CASH':
+        return 'CASH_PAYMENT';
+      default:
+        return this.buyPolicyForm.paymentReference;
+    }
+  }
+
+  // Helper method to check if payment details are valid
+  isPaymentDetailsValid(): boolean {
+    switch (this.buyPolicyForm.paymentMethod) {
+      case 'CREDIT_CARD':
+      case 'DEBIT_CARD':
+        return this.buyPolicyForm.cardNumber.trim().length >= 16;
+      case 'BANK_TRANSFER':
+        return this.buyPolicyForm.paymentReference.trim().length > 0;
+      case 'PAYPAL':
+        return this.buyPolicyForm.upiId.trim().length > 0 && this.buyPolicyForm.upiId.includes('@');
+      case 'CASH':
+        return true; // Cash doesn't need additional details
+      default:
+        return this.buyPolicyForm.paymentReference.trim().length > 0;
+    }
+  }
 
   constructor(private store: Store<{ customer: CustomerState }>) {
     this.user$ = this.store.select(selectUser);
@@ -156,8 +194,13 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   // Buy policy with simple animation
   async buyPolicy(policyId: string): Promise<void> {
     
-    if (!this.buyPolicyForm.startDate || !this.buyPolicyForm.nominee) {
+    if (!this.buyPolicyForm.startDate || !this.buyPolicyForm.nominee || !this.buyPolicyForm.paymentMethod) {
       alert('Please fill in all required fields');
+      return;
+    }
+
+    if (!this.isPaymentDetailsValid()) {
+      alert('Please provide valid payment details');
       return;
     }
 
@@ -251,7 +294,9 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     const body = {
       startDate: this.buyPolicyForm.startDate,
       termMonths: this.buyPolicyForm.termMonths,
-      nominee: this.buyPolicyForm.nominee
+      nominee: this.buyPolicyForm.nominee,
+      paymentMethod: this.buyPolicyForm.paymentMethod,
+      paymentReference: this.getCurrentPaymentDetails()
     };
 
     this.store.dispatch(buyPolicy({ policyId: policyId, body }));
@@ -587,7 +632,11 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       policyId: '',
       startDate: '',
       termMonths: 12,
-      nominee: ''
+      nominee: '',
+      paymentMethod: 'CREDIT_CARD',
+      cardNumber: '',
+      upiId: '',
+      paymentReference: ''
     };
   }
 

@@ -97,6 +97,39 @@ export class CustomerEffects {
     )
   );
 
+  submitClaimWithoutPolicy$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CustomerActions.submitClaimWithoutPolicy),
+      mergeMap(({ claimData }) =>
+        this.customerPolicy.submitClaimWithoutPolicy(claimData).pipe(
+          map((response) => CustomerActions.submitClaimWithoutPolicySuccess({ claim: response.claim })),
+          catchError((error) => of(CustomerActions.submitClaimWithoutPolicyFailure({ error })))
+        )
+      )
+    )
+  );
+
+  // Reload claims after successful submission
+  submitClaimSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CustomerActions.submitClaimSuccess),
+      mergeMap(() => [
+        CustomerActions.loadMyClaims(),
+        CustomerActions.loadClaimStats()
+      ])
+    )
+  );
+
+  submitClaimWithoutPolicySuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CustomerActions.submitClaimWithoutPolicySuccess),
+      mergeMap(() => [
+        CustomerActions.loadMyClaims(),
+        CustomerActions.loadClaimStats()
+      ])
+    )
+  );
+
   loadMyClaims$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CustomerActions.loadMyClaims),

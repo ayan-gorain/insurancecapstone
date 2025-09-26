@@ -14,6 +14,11 @@ import { UsersAgents } from './components/admin/users-agents/users-agents';
 import { CreateAgent } from './components/admin/create-agent/create-agent';
 import { AuditLogsComponent } from './components/admin/audit-logs/audit-logs.component';
 import { SummaryDashboardComponent } from './components/admin/summary-dashboard/summary-dashboard.component';
+import { AgentDashbaord } from './components/agent/agent-dashbaord/agent-dashbaord';
+import { AgentCustomers } from './components/agent/agent-customers/agent-customers';
+import { PendingClaims } from './components/agent/pending-claims/pending-claims';
+import { AgentStats } from './components/agent/agent-stats/agent-stats';
+import { AgentProfile } from './components/agent/agent-profile/agent-profile';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -71,6 +76,30 @@ export const routes: Routes = [
       { 
         path: 'profile', 
         component: CustomerProfileComponent
+      }
+    ]
+  },
+  { 
+    path: 'agent', 
+    component: AgentDashbaord,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'agent' },
+    children: [
+      { 
+        path: 'customers', 
+        component: AgentCustomers
+      },
+      { 
+        path: 'pending-claims', 
+        component: PendingClaims
+      },
+      { 
+        path: 'stats', 
+        component: AgentStats
+      },
+      { 
+        path: 'profile', 
+        component: AgentProfile
       }
     ]
   },

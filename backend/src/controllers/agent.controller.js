@@ -47,11 +47,17 @@ export const getMyCustomersClaims = async (req, res) => {
 // Get pending claims for agent's customers
 export const getPendingClaims = async (req, res) => {
   try {
+    console.log('Agent Controller - Get Pending Claims - User ID:', req.user._id);
+    console.log('Agent Controller - Get Pending Claims - User Role:', req.user.role);
+    
     // Get customers assigned to this agent
     const customers = await User.find({ 
       role: 'customer', 
       assignedAgentId: req.user._id 
     }).select('_id');
+    
+    console.log('Agent Controller - Get Pending Claims - Assigned customers:', customers.length);
+    console.log('Agent Controller - Get Pending Claims - Customer IDs:', customers.map(c => c._id));
     
     const customerIds = customers.map(c => c._id);
     
@@ -64,9 +70,12 @@ export const getPendingClaims = async (req, res) => {
       .populate('userPolicyId.policyProductId', 'title description premium termMonths minSumInsured')
       .sort({ createdAt: -1 });
     
+    console.log('Agent Controller - Get Pending Claims - Found pending claims:', pendingClaims.length);
+    console.log('Agent Controller - Get Pending Claims - Claims:', pendingClaims.map(c => ({ id: c._id, status: c.status, customer: c.userId?.name })));
+    
     res.json(pendingClaims);
   } catch (err) {
-    console.error(err);
+    console.error('Agent Controller - Get Pending Claims - Error:', err);
     res.status(500).json({ message: "Failed to fetch pending claims" });
   }
 };
@@ -77,18 +86,33 @@ export const reviewClaim = async (req, res) => {
     const { claimId } = req.params;
     const { status, notes, approvedAmount } = req.body;
     
+    console.log('Agent Controller - Review Claim - Claim ID:', claimId);
+    console.log('Agent Controller - Review Claim - Request Body:', req.body);
+    console.log('Agent Controller - Review Claim - User ID:', req.user._id);
+    console.log('Agent Controller - Review Claim - User Role:', req.user.role);
+    
     if (!['APPROVED', 'REJECTED'].includes(status)) {
+      console.log('Agent Controller - Review Claim - Invalid status:', status);
       return res.status(400).json({ message: "Status must be APPROVED or REJECTED" });
     }
     
     // Get the claim and verify it belongs to agent's customer
+    console.log('Agent Controller - Review Claim - Looking for claim with ID:', claimId);
     const claim = await Claim.findById(claimId).populate('userId', 'name email assignedAgentId');
+    console.log('Agent Controller - Review Claim - Found claim:', claim ? 'Yes' : 'No');
+    
     if (!claim) {
+      console.log('Agent Controller - Review Claim - Claim not found');
       return res.status(404).json({ message: "Claim not found" });
     }
     
+    console.log('Agent Controller - Review Claim - Claim user ID:', claim.userId._id);
+    console.log('Agent Controller - Review Claim - Claim assigned agent ID:', claim.userId.assignedAgentId);
+    console.log('Agent Controller - Review Claim - Current user ID:', req.user._id);
+    
     // Verify the claim belongs to agent's assigned customer
     if (claim.userId.assignedAgentId.toString() !== req.user._id.toString()) {
+      console.log('Agent Controller - Review Claim - Access denied - not assigned to this agent');
       return res.status(403).json({ message: "You can only review claims for your assigned customers" });
     }
     
@@ -144,12 +168,13 @@ export const reviewClaim = async (req, res) => {
       } 
     });
     
+    console.log('Agent Controller - Review Claim - Success - Updated claim:', updatedClaim._id);
     res.json({
       message: `Claim ${status.toLowerCase()} successfully`,
       claim: updatedClaim
     });
   } catch (err) {
-    console.error(err);
+    console.error('Agent Controller - Review Claim - Error:', err);
     res.status(500).json({ message: "Failed to review claim" });
   }
 };

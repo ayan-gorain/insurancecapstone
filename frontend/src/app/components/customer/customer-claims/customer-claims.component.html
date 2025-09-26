@@ -2,9 +2,37 @@
   <div class="flex justify-between items-center">
     <h2 class="text-2xl font-bold text-gray-800">My Claims</h2>
     <button (click)="showClaimForm = !showClaimForm" 
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+            [disabled]="!hasAssignedAgent"
+            [class]="hasAssignedAgent ? 'px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors' : 'px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed'">
       {{ showClaimForm ? 'Cancel' : 'Submit New Claim' }}
     </button>
+  </div>
+
+  <!-- Agent Assignment Status -->
+  <div class="p-4 rounded-lg" [class]="hasAssignedAgent ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'">
+    <div class="flex items-center space-x-3">
+      <div [class]="hasAssignedAgent ? 'text-green-600' : 'text-red-600'">
+        <svg *ngIf="hasAssignedAgent" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <svg *ngIf="!hasAssignedAgent" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 [class]="hasAssignedAgent ? 'text-green-800 font-semibold' : 'text-red-800 font-semibold'">
+          {{ hasAssignedAgent ? 'Agent Assigned' : 'No Agent Assigned' }}
+        </h3>
+        <p [class]="hasAssignedAgent ? 'text-green-700 text-sm' : 'text-red-700 text-sm'">
+          <span *ngIf="hasAssignedAgent">
+            Your assigned agent: <strong>{{ assignedAgent?.name }}</strong> ({{ assignedAgent?.email }})
+          </span>
+          <span *ngIf="!hasAssignedAgent">
+            You cannot submit claims until an agent is assigned to you. Please contact support to get an agent assigned.
+          </span>
+        </p>
+      </div>
+    </div>
   </div>
 
   <!-- Claims Stats -->
@@ -39,23 +67,54 @@
   <div *ngIf="showClaimForm" class="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-200">
     <h3 class="text-lg font-semibold text-gray-800 mb-4">Submit New Claim</h3>
     
-    <form [formGroup]="claimForm" (ngSubmit)="submitClaim()" class="space-y-4">
-      <!-- Policy Selection -->
+    <!-- No Agent Warning -->
+    <div *ngIf="!hasAssignedAgent" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+      <div class="flex items-center space-x-2">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <p class="text-red-800 font-medium">Cannot Submit Claims</p>
+      </div>
+      <p class="text-red-700 text-sm mt-1">
+        You cannot submit claims until an agent is assigned to you. Please contact support to get an agent assigned.
+      </p>
+    </div>
+    
+    <form [formGroup]="claimForm" (ngSubmit)="submitClaim()" class="space-y-4" [class.opacity-50]="!hasAssignedAgent">
+      <!-- Policy Selection (Optional) -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Select Policy</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Select Policy (Optional)</label>
         <select formControlName="userPolicyId" 
-                class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none"
-                [class.border-red-500]="claimForm.get('userPolicyId')?.invalid && claimForm.get('userPolicyId')?.touched">
-          <option value="">Choose a policy...</option>
+                class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none">
+          <option value="">No active policy - Submit general claim</option>
           <option *ngFor="let policy of (customerState$ | async)?.myPolicies" 
                   [value]="policy._id"
                   [disabled]="policy.status !== 'ACTIVE'">
             {{ policy.policyProductId?.title }} - {{ policy.status }}
           </option>
         </select>
-        <div *ngIf="claimForm.get('userPolicyId')?.invalid && claimForm.get('userPolicyId')?.touched" 
+        <div class="text-sm text-gray-600 mt-1">
+          <span class="font-semibold">Note:</span> You can submit claims even without an active policy. 
+          If you have an active policy, select it above for faster processing.
+        </div>
+      </div>
+
+      <!-- Policy Type (for claims without active policy) -->
+      <div *ngIf="!claimForm.get('userPolicyId')?.value">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Policy Type</label>
+        <select formControlName="policyType" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none"
+                [class.border-red-500]="claimForm.get('policyType')?.invalid && claimForm.get('policyType')?.touched">
+          <option value="GENERAL">General Insurance</option>
+          <option value="HEALTH">Health Insurance</option>
+          <option value="AUTO">Auto Insurance</option>
+          <option value="HOME">Home Insurance</option>
+          <option value="LIFE">Life Insurance</option>
+          <option value="TRAVEL">Travel Insurance</option>
+        </select>
+        <div *ngIf="claimForm.get('policyType')?.invalid && claimForm.get('policyType')?.touched" 
              class="text-red-600 text-sm mt-1">
-          Please select a policy
+          Please select a policy type
         </div>
       </div>
 
@@ -101,7 +160,7 @@
 
       <!-- Claim Amount -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Claim Amount ($)</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Claim Amount (₹)</label>
         <input formControlName="amount" 
                type="number" 
                placeholder="Enter claim amount"
@@ -109,7 +168,7 @@
                [class.border-red-500]="claimForm.get('amount')?.invalid && claimForm.get('amount')?.touched">
         <div *ngIf="claimForm.get('amount')?.invalid && claimForm.get('amount')?.touched" 
              class="text-red-600 text-sm mt-1">
-          Please enter a valid amount (minimum $1)
+          Please enter a valid amount (minimum ₹1)
         </div>
       </div>
 
@@ -195,11 +254,11 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
             <div>
               <p class="text-sm text-gray-600">Claimed Amount</p>
-              <p class="font-semibold text-gray-800">${{ claim.amountClaimed | number }}</p>
+              <p class="font-semibold text-gray-800">₹{{ claim.amountClaimed | number }}</p>
             </div>
             <div *ngIf="claim.approvedAmount">
               <p class="text-sm text-gray-600">Approved Amount</p>
-              <p class="font-semibold text-green-600">${{ claim.approvedAmount | number }}</p>
+              <p class="font-semibold text-green-600">₹{{ claim.approvedAmount | number }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-600">Incident Date</p>
@@ -222,7 +281,7 @@
               <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span class="text-green-800 font-medium">Claim approved for ${{ claim.approvedAmount | number }}</span>
+              <span class="text-green-800 font-medium">Claim approved for ₹{{ claim.approvedAmount | number }}</span>
             </div>
           </div>
         </div>

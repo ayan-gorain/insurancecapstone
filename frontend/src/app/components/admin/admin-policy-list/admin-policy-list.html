@@ -27,13 +27,13 @@
           <p class="text-sm text-gray-600 mb-3 line-clamp-3">{{ policy.description }}</p>
           <div class="space-y-2 mb-4">
             <p class="text-gray-800 font-semibold">
-              <span class="text-green-500">Premium:</span> ${{ policy.premium | number }}
+              <span class="text-green-500">Premium:</span> ₹{{ policy.premium | number }}
             </p>
             <p class="text-gray-800">
               <span class="text-green-500">Term:</span> {{ policy.termMonths }} months
             </p>
             <p class="text-gray-800">
-              <span class="text-green-500">Min Sum Insured:</span> ${{ policy.minSumInsured | number }}
+              <span class="text-green-500">Min Sum Insured:</span> ₹{{ policy.minSumInsured | number }}
             </p>
           </div>
   

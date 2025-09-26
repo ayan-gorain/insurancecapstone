@@ -7,17 +7,21 @@ import { userReducer } from './user/user.reducer';
 import { UserState } from './user/user.state';
 import { customerReducer } from './customer/customer.reducer';
 import { CustomerState } from './customer/customer.state';
+import { agentReducer } from './agent/agent.reducer';
+import { AgentState } from './agent/agent.state';
 
 export interface AppState {
   auth: AuthState;
   policy: PolicyState;
   users: UserState;
   customer: CustomerState;
+  agent: AgentState;
 }
 
 export const reducers: ActionReducerMap<AppState> = {
   auth: authReducer,
   policy: policyReducer,
   users: userReducer,
-  customer: customerReducer
+  customer: customerReducer,
+  agent: agentReducer
 };

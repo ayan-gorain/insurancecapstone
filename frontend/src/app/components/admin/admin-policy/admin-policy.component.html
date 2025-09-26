@@ -69,12 +69,12 @@
     <!-- Premium and Term -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <input formControlName="premium" type="number" placeholder="Annual Premium ($)" 
+        <input formControlName="premium" type="number" placeholder="Annual Premium (₹)" 
                class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
                [class.border-red-500]="form.get('premium')?.invalid && form.get('premium')?.touched" />
         <div *ngIf="form.get('premium')?.invalid && form.get('premium')?.touched" class="text-red-600 text-sm mt-1">
           <span *ngIf="form.get('premium')?.errors?.['required']">Premium is required</span>
-          <span *ngIf="form.get('premium')?.errors?.['min']">Premium must be at least $1</span>
+          <span *ngIf="form.get('premium')?.errors?.['min']">Premium must be at least ₹1</span>
         </div>
       </div>
 
@@ -91,12 +91,12 @@
 
     <!-- Minimum Sum Insured -->
     <div>
-      <input formControlName="minSumInsured" type="number" placeholder="Minimum Sum Insured ($)" 
+      <input formControlName="minSumInsured" type="number" placeholder="Minimum Sum Insured (₹)" 
              class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
              [class.border-red-500]="form.get('minSumInsured')?.invalid && form.get('minSumInsured')?.touched" />
       <div *ngIf="form.get('minSumInsured')?.invalid && form.get('minSumInsured')?.touched" class="text-red-600 text-sm mt-1">
         <span *ngIf="form.get('minSumInsured')?.errors?.['required']">Minimum sum insured is required</span>
-        <span *ngIf="form.get('minSumInsured')?.errors?.['min']">Minimum sum insured must be at least $1,000</span>
+        <span *ngIf="form.get('minSumInsured')?.errors?.['min']">Minimum sum insured must be at least ₹1,000</span>
       </div>
     </div>
 
