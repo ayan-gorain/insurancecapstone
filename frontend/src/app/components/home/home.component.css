@@ -146,3 +146,11 @@ html {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
+
+/* Line clamp utility for truncating text */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
