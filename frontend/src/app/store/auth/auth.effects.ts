@@ -52,7 +52,6 @@ export class AuthEffects {
         tap(({ user, token }) => {
           localStorage.setItem('token', token);
           if (user.role === 'admin') this.router.navigate(['/admin']);
-          else if (user.role === 'agent') this.router.navigate(['/agent']);
           else this.router.navigate(['/customer']);
         })
       ),
@@ -77,20 +76,15 @@ export class AuthEffects {
       ofType(AuthActions.initializeAuth),
       mergeMap(() => {
         const token = localStorage.getItem('token');
-        console.log('Initializing auth with token:', token ? 'exists' : 'none');
-        
         if (!token) {
-          console.log('No token found, auth initialization failed');
           return of(AuthActions.initializeAuthFailure());
         }
         
         return this.authService.validateToken(token).pipe(
           map((user: any) => {
-            console.log('Token validation successful, user:', user);
             return AuthActions.initializeAuthSuccess({ user, token });
           }),
           catchError((error) => {
-            console.log('Token validation failed:', error);
             localStorage.removeItem('token');
             return of(AuthActions.initializeAuthFailure());
           })

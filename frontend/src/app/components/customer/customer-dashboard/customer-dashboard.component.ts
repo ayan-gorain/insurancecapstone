@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { selectUser } from '../../store/auth/auth.selectors';
-import * as AuthActions from '../../store/auth/auth.actions';
+import { selectUser } from '../../../store/auth/auth.selectors';
+import * as AuthActions from '../../../store/auth/auth.actions';
 
 @Component({
   selector: 'app-customer-dashboard',
@@ -15,16 +15,20 @@ import * as AuthActions from '../../store/auth/auth.actions';
 export class CustomerDashboardComponent implements OnInit {
   user$: Observable<any | null>;
 
-  constructor(private store: Store) {
+  constructor(
+    private store: Store,
+    public router: Router
+  ) {
     this.user$ = this.store.select(selectUser);
   }
 
   ngOnInit(): void {
-    // Load any initial data if needed
+    // Component initialization
   }
 
   logout(): void {
     this.store.dispatch(AuthActions.logout());
+    this.router.navigate(['/login']);
   }
 
   onImageError(event: any): void {

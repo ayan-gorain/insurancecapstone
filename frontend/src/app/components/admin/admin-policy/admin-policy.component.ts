@@ -45,10 +45,15 @@ export class AdminPolicyComponent {
     if (input.files && input.files[0]) {
       const file = input.files[0];
       
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
+      // Validate file type - allow all image formats
+      const allowedTypes = [
+        'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 
+        'image/svg+xml', 'image/bmp', 'image/tiff', 'image/avif'
+      ];
+      
+      if (!allowedTypes.includes(file.type.toLowerCase())) {
         this.store.dispatch(PolicyActions.createPolicyFailure({ 
-          error: 'Please select a valid image file' 
+          error: 'Please select a valid image file (JPEG, PNG, GIF, WebP, SVG, BMP, TIFF, AVIF)' 
         }));
         return;
       }

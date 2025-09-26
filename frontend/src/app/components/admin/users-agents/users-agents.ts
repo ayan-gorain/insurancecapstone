@@ -106,7 +106,6 @@ export class UsersAgents implements OnInit {
 
   assignAgentToCustomer() {
     if (this.selectedCustomer && this.selectedAgent) {
-      console.log('Assigning agent:', this.selectedAgent.name, 'to customer:', this.selectedCustomer.name);
       
       const token = localStorage.getItem('token');
       const headers = new HttpHeaders({
@@ -121,13 +120,10 @@ export class UsersAgents implements OnInit {
         agentId: this.selectedAgent._id
       };
       
-      console.log('Request body:', requestBody);
-      console.log('API URL:', `${apiUrl}/admin/assign-agent`);
       
       // Call backend API to assign agent to customer
       this.http.post(`${apiUrl}/admin/assign-agent`, requestBody, { headers }).subscribe({
         next: (response: any) => {
-          console.log('Assignment successful:', response);
           // Show success message
           alert(`Agent ${this.selectedAgent.name} has been assigned to customer ${this.selectedCustomer.name}`);
           
@@ -145,7 +141,6 @@ export class UsersAgents implements OnInit {
         }
       });
     } else {
-      console.log('Missing selection:', { selectedCustomer: this.selectedCustomer, selectedAgent: this.selectedAgent });
     }
   }
 }

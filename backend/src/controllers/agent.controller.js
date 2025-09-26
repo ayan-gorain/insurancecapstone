@@ -2,7 +2,6 @@ import User from "../models/User.js";
 import PolicyProduct from "../models/PolicyProduct.js";
 import Claim from "../models/Claim.js";
 import UserPolicy from "../models/UserPolicy.js";
-import Payment from "../models/Payment.js";
 import AuditLog from "../models/Auditlog.js";
 
 // Get agent's assigned customers

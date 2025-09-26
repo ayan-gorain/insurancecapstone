@@ -25,8 +25,8 @@ const userPolicySchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["ACTIVE", "EXPIRED", "CANCELLED"],
-        default: "ACTIVE"
+        enum: ["ACTIVE", "PENDING", "EXPIRED", "CANCELLED"],
+        default: "PENDING"
     },
     nominee: {
         type: String,

@@ -4,8 +4,10 @@ import { SignupComponent } from './components/signup/signup.component';
 import { AdminPolicyComponent } from './components/admin/admin-policy/admin-policy.component';
 import { AdminPolicyList } from './components/admin/admin-policy-list/admin-policy-list';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
-import { AgentDashboardComponent } from './components/admin/agent-dashboard/agent-dashboard.component';
-import { CustomerDashboardComponent } from './components/customer-dashboard/customer-dashboard.component';
+import { CustomerDashboardComponent } from './components/customer/customer-dashboard/customer-dashboard.component';
+import { CustomerPoliciesComponent } from './components/customer/customer-policies/customer-policies.component';
+import { CustomerClaimsComponent } from './components/customer/customer-claims/customer-claims.component';
+import { CustomerProfileComponent } from './components/customer/customer-profile/customer-profile.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 import { UsersAgents } from './components/admin/users-agents/users-agents';
@@ -53,16 +55,24 @@ export const routes: Routes = [
     ]
   },
   { 
-    path: 'agent', 
-    component: AgentDashboardComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'agent' }
-  },
-  { 
     path: 'customer', 
     component: CustomerDashboardComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'customer' }
+    data: { role: 'customer' },
+    children: [
+      { 
+        path: 'policies', 
+        component: CustomerPoliciesComponent
+      },
+      { 
+        path: 'claims', 
+        component: CustomerClaimsComponent
+      },
+      { 
+        path: 'profile', 
+        component: CustomerProfileComponent
+      }
+    ]
   },
   
   { path: '**', redirectTo: '/login' }

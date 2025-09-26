@@ -27,4 +27,5 @@ router.get("/claims", getMyClaims);
 router.get("/claims/:claimId", getClaimDetails);
 router.get("/claims-stats", getClaimStats);
 
+
 export default router;

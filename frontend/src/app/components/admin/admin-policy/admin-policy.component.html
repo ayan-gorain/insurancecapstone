@@ -1,34 +1,34 @@
-<div class="max-w-2xl mx-auto bg-slate-800/90 backdrop-blur-sm shadow-2xl rounded-2xl p-10 border border-slate-700">
-  <h2 class="text-3xl font-bold mb-8 text-center text-white">Create Insurance Policy</h2>
+<div class="max-w-2xl mx-auto bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl p-10 border border-gray-200">
+  <h2 class="text-3xl font-bold mb-8 text-center text-blue-600">Create Insurance Policy</h2>
 
   <!-- Policy Image Upload with Preview -->
   <div class="flex flex-col items-center mb-8">
-    <label class="relative cursor-pointer w-32 h-32 rounded-lg overflow-hidden border-2 border-slate-600 flex items-center justify-center bg-slate-700/50 hover:border-purple-500 transition-colors">
+    <label class="relative cursor-pointer w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-300 flex items-center justify-center bg-blue-50 hover:border-green-400 transition-colors">
       <!-- Show preview if image selected, else show + -->
       <img *ngIf="imagePreview" [src]="imagePreview" class="w-full h-full object-cover" />
       <span *ngIf="!imagePreview" class="text-4xl text-gray-400">📷</span>
 
-      <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+      <input type="file" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/bmp,image/tiff,image/avif" (change)="onFileSelected($event)" hidden />
     </label>
-    <span *ngIf="imageName" class="text-sm text-gray-300 mt-2">{{ imageName }}</span>
-    <p class="text-xs text-gray-400 mt-1">Upload policy image (max 5MB)</p>
+    <span *ngIf="imageName" class="text-sm text-gray-600 mt-2">{{ imageName }}</span>
+    <p class="text-xs text-gray-500 mt-1">Upload policy image (max 5MB)</p>
   </div>
 
   <!-- Loading Message -->
-  <div *ngIf="loading$ | async" class="mb-4 p-4 bg-blue-500/20 border border-blue-400/50 text-blue-300 rounded-lg backdrop-blur-sm">
+  <div *ngIf="loading$ | async" class="mb-4 p-4 bg-blue-100 border border-blue-300 text-blue-700 rounded-lg">
     <div class="flex items-center">
-      <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-300 mr-2"></div>
+      <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-700 mr-2"></div>
       Creating policy...
     </div>
   </div>
 
   <!-- Error Message -->
-  <div *ngIf="error$ | async as error" class="mb-4 p-4 bg-red-500/20 border border-red-400/50 text-red-300 rounded-lg backdrop-blur-sm">
+  <div *ngIf="error$ | async as error" class="mb-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
     {{ error }}
   </div>
 
   <!-- Success Message -->
-  <div *ngIf="createdPolicy$ | async as policy" class="mb-4 p-4 bg-green-500/20 border border-green-400/50 text-green-300 rounded-lg backdrop-blur-sm">
+  <div *ngIf="createdPolicy$ | async as policy" class="mb-4 p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg">
     Policy "{{ policy.title }}" created successfully!
   </div>
 
@@ -36,9 +36,9 @@
     <!-- Policy Code -->
     <div>
       <input formControlName="code" placeholder="Policy Code (e.g., AUTO-001)" 
-             class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-lg text-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+             class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
              [class.border-red-500]="form.get('code')?.invalid && form.get('code')?.touched" />
-      <div *ngIf="form.get('code')?.invalid && form.get('code')?.touched" class="text-red-400 text-sm mt-1">
+      <div *ngIf="form.get('code')?.invalid && form.get('code')?.touched" class="text-red-600 text-sm mt-1">
         <span *ngIf="form.get('code')?.errors?.['required']">Policy code is required</span>
         <span *ngIf="form.get('code')?.errors?.['minlength']">Code must be at least 3 characters</span>
       </div>
@@ -47,9 +47,9 @@
     <!-- Policy Title -->
     <div>
       <input formControlName="title" placeholder="Policy Title" 
-             class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-lg text-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+             class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
              [class.border-red-500]="form.get('title')?.invalid && form.get('title')?.touched" />
-      <div *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="text-red-400 text-sm mt-1">
+      <div *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="text-red-600 text-sm mt-1">
         <span *ngIf="form.get('title')?.errors?.['required']">Policy title is required</span>
         <span *ngIf="form.get('title')?.errors?.['minlength']">Title must be at least 5 characters</span>
       </div>
@@ -58,9 +58,9 @@
     <!-- Policy Description -->
     <div>
       <textarea formControlName="description" placeholder="Policy Description" rows="3"
-                class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-lg text-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"
+                class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all resize-none"
                 [class.border-red-500]="form.get('description')?.invalid && form.get('description')?.touched"></textarea>
-      <div *ngIf="form.get('description')?.invalid && form.get('description')?.touched" class="text-red-400 text-sm mt-1">
+      <div *ngIf="form.get('description')?.invalid && form.get('description')?.touched" class="text-red-600 text-sm mt-1">
         <span *ngIf="form.get('description')?.errors?.['required']">Description is required</span>
         <span *ngIf="form.get('description')?.errors?.['minlength']">Description must be at least 10 characters</span>
       </div>
@@ -70,9 +70,9 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
         <input formControlName="premium" type="number" placeholder="Annual Premium ($)" 
-               class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-lg text-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+               class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
                [class.border-red-500]="form.get('premium')?.invalid && form.get('premium')?.touched" />
-        <div *ngIf="form.get('premium')?.invalid && form.get('premium')?.touched" class="text-red-400 text-sm mt-1">
+        <div *ngIf="form.get('premium')?.invalid && form.get('premium')?.touched" class="text-red-600 text-sm mt-1">
           <span *ngIf="form.get('premium')?.errors?.['required']">Premium is required</span>
           <span *ngIf="form.get('premium')?.errors?.['min']">Premium must be at least $1</span>
         </div>
@@ -80,9 +80,9 @@
 
       <div>
         <input formControlName="termMonths" type="number" placeholder="Term (Months)" 
-               class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-lg text-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+               class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
                [class.border-red-500]="form.get('termMonths')?.invalid && form.get('termMonths')?.touched" />
-        <div *ngIf="form.get('termMonths')?.invalid && form.get('termMonths')?.touched" class="text-red-400 text-sm mt-1">
+        <div *ngIf="form.get('termMonths')?.invalid && form.get('termMonths')?.touched" class="text-red-600 text-sm mt-1">
           <span *ngIf="form.get('termMonths')?.errors?.['required']">Term is required</span>
           <span *ngIf="form.get('termMonths')?.errors?.['min']">Term must be at least 1 month</span>
         </div>
@@ -92,9 +92,9 @@
     <!-- Minimum Sum Insured -->
     <div>
       <input formControlName="minSumInsured" type="number" placeholder="Minimum Sum Insured ($)" 
-             class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-lg text-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+             class="w-full p-4 bg-white border border-gray-300 rounded-lg text-lg text-gray-800 placeholder-gray-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-all"
              [class.border-red-500]="form.get('minSumInsured')?.invalid && form.get('minSumInsured')?.touched" />
-      <div *ngIf="form.get('minSumInsured')?.invalid && form.get('minSumInsured')?.touched" class="text-red-400 text-sm mt-1">
+      <div *ngIf="form.get('minSumInsured')?.invalid && form.get('minSumInsured')?.touched" class="text-red-600 text-sm mt-1">
         <span *ngIf="form.get('minSumInsured')?.errors?.['required']">Minimum sum insured is required</span>
         <span *ngIf="form.get('minSumInsured')?.errors?.['min']">Minimum sum insured must be at least $1,000</span>
       </div>
@@ -103,8 +103,8 @@
     <!-- Action Buttons -->
     <div class="flex gap-4">
       <button type="submit" [disabled]="(loading$ | async) || !form.valid || !imageBase64" 
-              class="flex-1 py-4 rounded-lg transition-all text-lg font-medium"
-              [class]="(loading$ | async) || !form.valid || !imageBase64 ? 'bg-slate-600 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-purple-500/25'">
+              class="flex-1 py-4 rounded-xl text-lg font-medium transition-all
+                     bg-gradient-to-r from-green-400 to-blue-400 text-white hover:from-green-500 hover:to-blue-500 shadow-lg hover:shadow-green-300/25 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
         <span *ngIf="!(loading$ | async)">Create Policy</span>
         <span *ngIf="loading$ | async" class="flex items-center justify-center">
           <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -113,7 +113,7 @@
       </button>
 
       <button type="button" (click)="resetForm()" 
-              class="px-6 py-4 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors">
+              class="px-6 py-4 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors">
         Reset
       </button>
     </div>
@@ -121,8 +121,8 @@
 
   <!-- Back to Admin Dashboard Link -->
   <div class="mt-8 text-center">
-    <p class="text-gray-300">
-      <a routerLink="/admin" class="text-purple-400 hover:text-purple-300 font-medium transition-colors">← Back to Admin Dashboard</a>
+    <p class="text-gray-600">
+      <a routerLink="/admin" class="text-green-400 hover:text-green-500 font-medium transition-colors">← Back to Admin Dashboard</a>
     </p>
   </div>
 </div>

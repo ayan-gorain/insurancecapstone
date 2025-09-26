@@ -53,11 +53,22 @@ export const listPolicies = async (req, res) => {
 export const updatePolicy = async (req, res) => {
   try {
     const { policyId } = req.params;
-    const { code, title, description, premium, termMonths, minSumInsured } = req.body;
+    const { code, title, description, premium, termMonths, minSumInsured, image } = req.body;
+
+    let updateData = { code, title, description, premium, termMonths, minSumInsured };
+
+    // If image is provided, upload it to Cloudinary
+    if (image) {
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        folder: "policies",
+        allowed_formats: ["jpg", "jpeg", "png"],
+      });
+      updateData.imageUrl = uploadResult.secure_url;
+    }
 
     const policy = await PolicyProduct.findByIdAndUpdate(
       policyId,
-      { code, title, description, premium, termMonths, minSumInsured },
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -207,6 +218,7 @@ export const updateClaimStatus = async (req, res) => {
       .populate('userPolicyId', 'startDate endDate premiumPaid')
       .populate('userPolicyId.policyProductId', 'title description');
     
+
     // Log the action with more details
     await AuditLog.create({ 
       action: "UPDATE_CLAIM", 

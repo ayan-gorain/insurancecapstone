@@ -1,0 +1,232 @@
+<div class="space-y-6 w-full h-full overflow-y-auto min-h-0 p-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800">My Claims</h2>
+    <button (click)="showClaimForm = !showClaimForm" 
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+      {{ showClaimForm ? 'Cancel' : 'Submit New Claim' }}
+    </button>
+  </div>
+
+  <!-- Claims Stats -->
+  <div *ngIf="(customerState$ | async)?.claimStats as stats" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-200">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-600">{{ stats.totalClaims }}</div>
+        <div class="text-sm text-gray-600">Total Claims</div>
+      </div>
+    </div>
+    <div class="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-200">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-yellow-600">{{ stats.pendingClaims }}</div>
+        <div class="text-sm text-gray-600">Pending</div>
+      </div>
+    </div>
+    <div class="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-200">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-600">{{ stats.approvedClaims }}</div>
+        <div class="text-sm text-gray-600">Approved</div>
+      </div>
+    </div>
+    <div class="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-200">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-red-600">{{ stats.rejectedClaims }}</div>
+        <div class="text-sm text-gray-600">Rejected</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit New Claim Form -->
+  <div *ngIf="showClaimForm" class="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Submit New Claim</h3>
+    
+    <form [formGroup]="claimForm" (ngSubmit)="submitClaim()" class="space-y-4">
+      <!-- Policy Selection -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Select Policy</label>
+        <select formControlName="userPolicyId" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none"
+                [class.border-red-500]="claimForm.get('userPolicyId')?.invalid && claimForm.get('userPolicyId')?.touched">
+          <option value="">Choose a policy...</option>
+          <option *ngFor="let policy of (customerState$ | async)?.myPolicies" 
+                  [value]="policy._id"
+                  [disabled]="policy.status !== 'ACTIVE'">
+            {{ policy.policyProductId?.title }} - {{ policy.status }}
+          </option>
+        </select>
+        <div *ngIf="claimForm.get('userPolicyId')?.invalid && claimForm.get('userPolicyId')?.touched" 
+             class="text-red-600 text-sm mt-1">
+          Please select a policy
+        </div>
+      </div>
+
+      <!-- Incident Date -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Incident Date</label>
+        <input formControlName="incidentDate" 
+               type="date"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none"
+               [class.border-red-500]="claimForm.get('incidentDate')?.invalid && claimForm.get('incidentDate')?.touched">
+        <div *ngIf="claimForm.get('incidentDate')?.invalid && claimForm.get('incidentDate')?.touched" 
+             class="text-red-600 text-sm mt-1">
+          Please select incident date
+        </div>
+      </div>
+
+      <!-- Incident Location -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Incident Location</label>
+        <input formControlName="incidentLocation" 
+               placeholder="Where did the incident occur?"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none"
+               [class.border-red-500]="claimForm.get('incidentLocation')?.invalid && claimForm.get('incidentLocation')?.touched">
+        <div *ngIf="claimForm.get('incidentLocation')?.invalid && claimForm.get('incidentLocation')?.touched" 
+             class="text-red-600 text-sm mt-1">
+          Please enter incident location
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <textarea formControlName="description" 
+                  placeholder="Describe what happened..."
+                  rows="4"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none resize-none"
+                  [class.border-red-500]="claimForm.get('description')?.invalid && claimForm.get('description')?.touched"></textarea>
+        <div *ngIf="claimForm.get('description')?.invalid && claimForm.get('description')?.touched" 
+             class="text-red-600 text-sm mt-1">
+          Please provide a description (minimum 10 characters)
+        </div>
+      </div>
+
+      <!-- Claim Amount -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Claim Amount ($)</label>
+        <input formControlName="amount" 
+               type="number" 
+               placeholder="Enter claim amount"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none"
+               [class.border-red-500]="claimForm.get('amount')?.invalid && claimForm.get('amount')?.touched">
+        <div *ngIf="claimForm.get('amount')?.invalid && claimForm.get('amount')?.touched" 
+             class="text-red-600 text-sm mt-1">
+          Please enter a valid amount (minimum $1)
+        </div>
+      </div>
+
+      <!-- Proof Images -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Proof Images (Minimum 2 required)</label>
+        <input type="file" 
+               multiple 
+               accept="image/*"
+               (change)="onClaimImagesSelected($event)"
+               class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none">
+        <div class="text-sm text-gray-600 mt-1">
+          Upload photos or documents as proof. Supported formats: JPG, PNG, PDF
+        </div>
+        <div *ngIf="claimImages.length > 0" class="mt-2">
+          <p class="text-sm text-gray-600">Selected files: {{ claimImages.length }}</p>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <span *ngFor="let file of claimImages" 
+                  class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+              {{ file.name }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex gap-3 pt-4">
+        <button type="submit" 
+                [disabled]="!claimForm.valid || claimImages.length < 2 || (customerState$ | async)?.loading"
+                class="flex-1 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+          <span *ngIf="!(customerState$ | async)?.loading">Submit Claim</span>
+          <span *ngIf="(customerState$ | async)?.loading" class="flex items-center justify-center">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+            Submitting...
+          </span>
+        </button>
+        <button type="button" 
+                (click)="showClaimForm = false; resetClaimForm()"
+                class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Claims List -->
+  <div class="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Claim History</h3>
+    
+    <div *ngIf="(customerState$ | async)?.loading" class="text-center py-8">
+      <div class="inline-flex items-center">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-3"></div>
+        Loading claims...
+      </div>
+    </div>
+
+    <div *ngIf="(customerState$ | async)?.myClaims as claims">
+      <div *ngIf="claims.length === 0" class="text-center py-8 text-gray-600">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <p class="text-lg font-medium mb-2">No claims submitted yet</p>
+        <p class="text-gray-500">Submit your first claim to get started.</p>
+      </div>
+
+      <div *ngIf="claims.length > 0" class="space-y-4">
+        <div *ngFor="let claim of claims" class="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <h4 class="font-semibold text-gray-800">{{ claim.userPolicyId?.policyProductId?.title || 'Policy Claim' }}</h4>
+              <p class="text-sm text-gray-600">Claim ID: {{ claim._id }}</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-sm font-medium"
+                  [class]="{
+                    'bg-yellow-100 text-yellow-800': claim.status === 'PENDING',
+                    'bg-green-100 text-green-800': claim.status === 'APPROVED',
+                    'bg-red-100 text-red-800': claim.status === 'REJECTED'
+                  }">
+              {{ claim.status }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+            <div>
+              <p class="text-sm text-gray-600">Claimed Amount</p>
+              <p class="font-semibold text-gray-800">${{ claim.amountClaimed | number }}</p>
+            </div>
+            <div *ngIf="claim.approvedAmount">
+              <p class="text-sm text-gray-600">Approved Amount</p>
+              <p class="font-semibold text-green-600">${{ claim.approvedAmount | number }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Incident Date</p>
+              <p class="font-semibold text-gray-800">{{ claim.incidentDate | date:'short' }}</p>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <p class="text-sm text-gray-600">Description</p>
+            <p class="text-gray-800">{{ claim.description }}</p>
+          </div>
+
+          <div *ngIf="claim.decisionNotes" class="mb-3">
+            <p class="text-sm text-gray-600">Agent Notes</p>
+            <p class="text-gray-800">{{ claim.decisionNotes }}</p>
+          </div>
+
+          <div *ngIf="claim.status === 'APPROVED' && claim.approvedAmount" class="bg-green-50 border border-green-200 rounded-lg p-3">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="text-green-800 font-medium">Claim approved for ${{ claim.approvedAmount | number }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
