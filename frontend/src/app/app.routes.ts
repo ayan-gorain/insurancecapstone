@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AdminPolicyComponent } from './components/admin/admin-policy/admin-policy.component';
@@ -21,7 +22,8 @@ import { AgentStats } from './components/agent/agent-stats/agent-stats';
 import { AgentProfile } from './components/agent/agent-profile/agent-profile';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   
@@ -104,5 +106,5 @@ export const routes: Routes = [
     ]
   },
   
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/home' }
 ];

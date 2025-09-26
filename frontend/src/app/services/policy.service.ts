@@ -11,6 +11,7 @@ export interface PolicyData {
   termMonths: number;
   minSumInsured: number;
   image: string;
+  imageUrl?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -53,5 +54,10 @@ export class PolicyService {
       'Content-Type': 'application/json'
     });
     return this.http.put(`${this.apiUrl}/admin/policies/${policyid}`, policyData, { headers });
+  }
+
+  // Public method to get policies without authentication
+  getPublicPolicies(): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:4000/public/policies`);
   }
 }
