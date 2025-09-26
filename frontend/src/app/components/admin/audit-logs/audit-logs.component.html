@@ -1,9 +1,9 @@
-<div class="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 p-6">
+<div class="bg-white/90 backdrop-blur-sm rounded-xl border border-gray-200 p-6 shadow-lg">
   <div class="flex justify-between items-center mb-6">
-    <h3 class="text-xl font-semibold text-white">Audit Logs</h3>
+    <h3 class="text-xl font-semibold text-gray-800">Audit Logs</h3>
     <button (click)="loadAuditLogs()" 
             [disabled]="loading"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center">
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center">
       <svg *ngIf="loading" class="animate-spin h-4 w-4 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -14,19 +14,19 @@
 
   <!-- Loading State -->
   <div *ngIf="loading && auditLogs.length === 0" class="text-center py-8">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-    <p class="text-gray-400">Loading audit logs...</p>
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+    <p class="text-gray-600">Loading audit logs...</p>
   </div>
 
   <!-- Error State -->
-  <div *ngIf="error" class="mb-4 p-4 bg-red-500/20 border border-red-400/50 text-red-300 rounded-lg">
+  <div *ngIf="error" class="mb-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
     {{ error }}
   </div>
 
   <!-- Audit Logs List -->
   <div *ngIf="!loading || auditLogs.length > 0" class="space-y-4">
     <div *ngFor="let log of auditLogs" 
-         class="bg-slate-700/50 rounded-lg p-4 border border-slate-600/50 hover:border-slate-500/50 transition-colors">
+         class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-green-300 transition-colors">
       
       <!-- Header -->
       <div class="flex justify-between items-start mb-3">
@@ -35,35 +35,35 @@
                 class="px-3 py-1 rounded-full text-xs font-medium">
             {{ formatActionName(log.action) }}
           </span>
-          <span class="text-gray-400 text-sm">{{ formatTimestamp(log.timestamp) }}</span>
+          <span class="text-gray-600 text-sm">{{ formatTimestamp(log.timestamp) }}</span>
         </div>
       </div>
 
       <!-- Content -->
       <div class="space-y-2">
         <div class="flex items-center space-x-2">
-          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
           </svg>
-          <span class="text-white font-medium">{{ log.actorId.name }}</span>
-          <span class="text-gray-400">({{ log.actorId.email }})</span>
+          <span class="text-gray-800 font-medium">{{ log.actorId.name }}</span>
+          <span class="text-gray-600">({{ log.actorId.email }})</span>
         </div>
         
         <div class="flex items-center space-x-2">
-          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span class="text-gray-300">{{ getActionDescription(log.action, log.details) }}</span>
+          <span class="text-gray-700">{{ getActionDescription(log.action, log.details) }}</span>
         </div>
 
         <!-- Details -->
         <div *ngIf="log.details && getObjectKeys(log.details).length > 0" 
-             class="mt-3 p-3 bg-slate-600/30 rounded border border-slate-600/50">
-          <div class="text-xs text-gray-400 mb-2">Details:</div>
-          <div class="text-sm text-gray-300">
+             class="mt-3 p-3 bg-gray-100 rounded border border-gray-200">
+          <div class="text-xs text-gray-600 mb-2">Details:</div>
+          <div class="text-sm text-gray-700">
             <div *ngFor="let key of getObjectKeys(log.details)" class="flex justify-between">
-              <span class="text-gray-400">{{ key }}:</span>
-              <span class="text-white">{{ log.details[key] }}</span>
+              <span class="text-gray-600">{{ key }}:</span>
+              <span class="text-gray-800">{{ log.details[key] }}</span>
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@
 
   <!-- Empty State -->
   <div *ngIf="!loading && auditLogs.length === 0 && !error" class="text-center py-8">
-    <div class="text-gray-400">
+    <div class="text-gray-600">
       <svg class="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
       </svg>

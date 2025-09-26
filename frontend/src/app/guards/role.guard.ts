@@ -37,9 +37,6 @@ export class RoleGuard implements CanActivate {
           case 'admin':
             this.router.navigate(['/admin']);
             break;
-          case 'agent':
-            this.router.navigate(['/agent']);
-            break;
           case 'customer':
             this.router.navigate(['/customer']);
             break;

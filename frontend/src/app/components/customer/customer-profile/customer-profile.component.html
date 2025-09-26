@@ -1,0 +1,107 @@
+<div class="space-y-6 w-full h-full overflow-y-auto min-h-0 p-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800">My Profile</h2>
+  </div>
+  
+  <div class="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-200">
+    <div *ngIf="user$ | async as user" class="space-y-6">
+      <!-- Profile Header -->
+      <div class="flex items-center space-x-6">
+        <!-- User Photo or Initial -->
+        <div class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center">
+          <img *ngIf="user.photo && user.photo.trim()" 
+               [src]="user.photo" 
+               [alt]="user.name"
+               (error)="onImageError($event)"
+               class="w-full h-full object-cover">
+          <div *ngIf="!user.photo || !user.photo.trim()" 
+               class="w-full h-full bg-gradient-to-r from-blue-500 to-green-500 flex items-center justify-center">
+            <span class="text-white text-2xl font-medium">{{ user.name?.charAt(0)?.toUpperCase() }}</span>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-bold text-gray-800">{{ user.name }}</h3>
+          <p class="text-gray-600">{{ user.role | titlecase }}</p>
+        </div>
+      </div>
+
+      <!-- Profile Information -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Full Name</label>
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p class="text-gray-800">{{ user.name }}</p>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p class="text-gray-800">{{ user.email }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Account Type</label>
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                {{ user.role | titlecase }}
+              </span>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Member Since</label>
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p class="text-gray-800">{{ user.createdAt | date:'mediumDate' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Statistics -->
+      <div class="border-t border-gray-200 pt-6">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">Account Overview</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-blue-600">Active</div>
+              <div class="text-sm text-blue-600">Account Status</div>
+            </div>
+          </div>
+          <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-green-600">{{ user.role | titlecase }}</div>
+              <div class="text-sm text-green-600">User Role</div>
+            </div>
+          </div>
+          <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-purple-600">Verified</div>
+              <div class="text-sm text-purple-600">Email Status</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="border-t border-gray-200 pt-6">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h4>
+        <div class="flex flex-wrap gap-3">
+          <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+            Update Profile
+          </button>
+          <button class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+            Change Password
+          </button>
+          <button class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+            Download Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
