@@ -313,14 +313,19 @@ export const submitClaim = async (req, res) => {
 
   export const getMyClaims = async (req, res) => {
     try {
+      console.log('Customer Controller - Getting claims for user:', req.user._id);
+      
       const claims = await Claim.find({ userId: req.user._id })
         .populate("userPolicyId", "startDate endDate premiumPaid status")
         .populate("userPolicyId.policyProductId", "title description premium termMonths minSumInsured")
         .populate("decidedByAgentId", "name email")
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .lean(); // Use lean() for better performance
+      
+      console.log('Customer Controller - Found claims:', claims.length);
       res.json(claims);
     } catch (err) {
-      console.error(err);
+      console.error('Customer Controller - Error fetching claims:', err);
       res.status(500).json({ message: "Failed to fetch claims" });
     }
   };
@@ -356,32 +361,45 @@ export const submitClaim = async (req, res) => {
   export const getClaimStats = async (req, res) => {
     try {
       const userId = req.user._id;
+      console.log('Customer Controller - Getting claim stats for user:', userId);
       
+      // Use a single aggregation query for better performance
       const stats = await Claim.aggregate([
         { $match: { userId: userId } },
         {
           $group: {
-            _id: "$status",
-            count: { $sum: 1 },
-            totalAmount: { $sum: "$amountClaimed" }
+            _id: null,
+            totalClaims: { $sum: 1 },
+            pendingClaims: {
+              $sum: { $cond: [{ $eq: ["$status", "PENDING"] }, 1, 0] }
+            },
+            approvedClaims: {
+              $sum: { $cond: [{ $eq: ["$status", "APPROVED"] }, 1, 0] }
+            },
+            rejectedClaims: {
+              $sum: { $cond: [{ $eq: ["$status", "REJECTED"] }, 1, 0] }
+            },
+            totalClaimedAmount: { $sum: "$amountClaimed" },
+            totalApprovedAmount: {
+              $sum: { $cond: [{ $eq: ["$status", "APPROVED"] }, "$approvedAmount", 0] }
+            }
           }
         }
       ]);
       
-      const totalClaims = await Claim.countDocuments({ userId: userId });
-      const pendingClaims = await Claim.countDocuments({ userId: userId, status: "PENDING" });
-      const approvedClaims = await Claim.countDocuments({ userId: userId, status: "APPROVED" });
-      const rejectedClaims = await Claim.countDocuments({ userId: userId, status: "REJECTED" });
+      const result = stats[0] || {
+        totalClaims: 0,
+        pendingClaims: 0,
+        approvedClaims: 0,
+        rejectedClaims: 0,
+        totalClaimedAmount: 0,
+        totalApprovedAmount: 0
+      };
       
-      res.json({
-        totalClaims,
-        pendingClaims,
-        approvedClaims,
-        rejectedClaims,
-        statusBreakdown: stats
-      });
+      console.log('Customer Controller - Claim stats result:', result);
+      res.json(result);
     } catch (err) {
-      console.error(err);
+      console.error('Customer Controller - Error fetching claim stats:', err);
       res.status(500).json({ message: "Failed to fetch claim statistics" });
     }
   };

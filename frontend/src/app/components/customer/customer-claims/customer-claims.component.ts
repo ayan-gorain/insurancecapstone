@@ -28,6 +28,11 @@ export class CustomerClaimsComponent implements OnInit {
   hasAssignedAgent: boolean = false;
   assignedAgent: any = null;
   
+  // Loading states for individual sections
+  claimsLoading: boolean = true;
+  statsLoading: boolean = true;
+  agentLoading: boolean = true;
+  
   // Claim form
   claimForm: FormGroup;
 
@@ -54,25 +59,66 @@ export class CustomerClaimsComponent implements OnInit {
       ofType(submitClaimSuccess, submitClaimWithoutPolicySuccess)
     ).subscribe(() => {
       alert('Claim submitted successfully! Your claim has been sent for review.');
+      // Clear cache to ensure fresh data is loaded
+      this.customerPolicy.clearCache();
+    });
+
+    // Listen to store changes to update loading states
+    this.customerState$.subscribe(state => {
+      // Update claims loading state
+      if (state.myClaims !== undefined) {
+        this.claimsLoading = false;
+      }
+      
+      // Update stats loading state
+      if (state.claimStats !== undefined) {
+        this.statsLoading = false;
+      }
+      
+      // Handle errors
+      if (state.error) {
+        console.error('Customer state error:', state.error);
+        // Reset loading states on error
+        this.claimsLoading = false;
+        this.statsLoading = false;
+        this.agentLoading = false;
+      }
     });
   }
 
   ngOnInit(): void {
+    // Load all data in parallel for better performance
+    this.loadAllData();
+  }
+
+  loadAllData(): void {
+    // Reset loading states
+    this.claimsLoading = true;
+    this.statsLoading = true;
+    this.agentLoading = true;
+
+    // Clear cache to ensure fresh data
+    this.customerPolicy.clearCache();
+
+    // Load claims and stats in parallel
     this.loadMyClaims();
     this.loadClaimStats();
     this.checkAgentAssignment();
   }
 
   checkAgentAssignment(): void {
+    this.agentLoading = true;
     this.customerPolicy.checkAgentAssignment().subscribe({
       next: (response) => {
         this.hasAssignedAgent = response.hasAssignedAgent;
         this.assignedAgent = response.assignedAgent;
+        this.agentLoading = false;
       },
       error: (error) => {
         console.error('Error checking agent assignment:', error);
         this.hasAssignedAgent = false;
         this.assignedAgent = null;
+        this.agentLoading = false;
       }
     });
   }

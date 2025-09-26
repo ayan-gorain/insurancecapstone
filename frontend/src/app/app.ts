@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('SecureGuard Pro - Advanced Insurance Protection');
+  protected readonly title = signal('LifeShield - Advanced Insurance Protection');
 }

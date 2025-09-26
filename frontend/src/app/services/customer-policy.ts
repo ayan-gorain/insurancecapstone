@@ -7,6 +7,11 @@ import { tap } from 'rxjs/operators';
 @Injectable()
 export class CustomerPolicy {
   private baseUrl = environment.apiUrl;
+  private claimsCache: any = null;
+  private statsCache: any = null;
+  private cacheTimestamp: number = 0;
+  private readonly CACHE_DURATION = 30000; // 30 seconds cache
+  
   constructor(private http: HttpClient) {}
   
   getAvailablePolicies(): Observable<any> {
@@ -71,7 +76,24 @@ export class CustomerPolicy {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
-    return this.http.get(`${this.baseUrl}/customer/claims`, { headers });
+    
+    // Check cache first
+    const now = Date.now();
+    if (this.claimsCache && (now - this.cacheTimestamp) < this.CACHE_DURATION) {
+      console.log('Customer Service - Returning cached claims');
+      return new Observable(observer => {
+        observer.next(this.claimsCache);
+        observer.complete();
+      });
+    }
+    
+    return this.http.get(`${this.baseUrl}/customer/claims`, { headers }).pipe(
+      tap(claims => {
+        this.claimsCache = claims;
+        this.cacheTimestamp = now;
+        console.log('Customer Service - Cached claims data');
+      })
+    );
   }
 
   getClaimDetails(claimId: string): Observable<any> {
@@ -89,7 +111,24 @@ export class CustomerPolicy {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
-    return this.http.get(`${this.baseUrl}/customer/claims-stats`, { headers });
+    
+    // Check cache first
+    const now = Date.now();
+    if (this.statsCache && (now - this.cacheTimestamp) < this.CACHE_DURATION) {
+      console.log('Customer Service - Returning cached stats');
+      return new Observable(observer => {
+        observer.next(this.statsCache);
+        observer.complete();
+      });
+    }
+    
+    return this.http.get(`${this.baseUrl}/customer/claims-stats`, { headers }).pipe(
+      tap(stats => {
+        this.statsCache = stats;
+        this.cacheTimestamp = now;
+        console.log('Customer Service - Cached stats data');
+      })
+    );
   }
 
   checkAgentAssignment(): Observable<any> {
@@ -99,6 +138,14 @@ export class CustomerPolicy {
       'Content-Type': 'application/json'
     };
     return this.http.get(`${this.baseUrl}/customer/agent-assignment`, { headers });
+  }
+
+  // Clear cache when new data is submitted
+  clearCache(): void {
+    this.claimsCache = null;
+    this.statsCache = null;
+    this.cacheTimestamp = 0;
+    console.log('Customer Service - Cache cleared');
   }
 
 }

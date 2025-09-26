@@ -1,4 +1,4 @@
-# SecureGuard Pro Insurance System - Complete Workflow Documentation
+# LifeShield Insurance System - Complete Workflow Documentation
 
 ## Table of Contents
 1. [System Overview](#system-overview)
@@ -14,7 +14,7 @@
 
 ## System Overview
 
-**SecureGuard Pro** is a comprehensive insurance management system built with modern web technologies. It provides a complete solution for insurance policy management, claims processing, and customer-agent relationships.
+**LifeShield** is a comprehensive insurance management system built with modern web technologies. It provides a complete solution for insurance policy management, claims processing, and customer-agent relationships.
 
 ### Technology Stack
 - **Frontend**: Angular 20+ with TypeScript, Tailwind CSS, NgRx for state management

@@ -6,6 +6,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 
+// Declare jasmine global for TypeScript
+declare const jasmine: any;
+
 export interface TestConfig {
   imports?: any[];
   providers?: any[];
@@ -60,12 +63,12 @@ export function setupTestBed(config: TestConfig) {
   });
 }
 
-export function getMockStore(): jasmine.SpyObj<Store> {
-  return TestBed.inject(Store) as jasmine.SpyObj<Store>;
+export function getMockStore(): any {
+  return TestBed.inject(Store) as any;
 }
 
-export function getMockRouter(): jasmine.SpyObj<Router> {
-  return TestBed.inject(Router) as jasmine.SpyObj<Router>;
+export function getMockRouter(): any {
+  return TestBed.inject(Router) as any;
 }
 
 export function getMockActivatedRoute() {
