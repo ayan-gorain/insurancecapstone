@@ -23,21 +23,26 @@ const paymentSchema = new mongoose.Schema({
     },
     method: {
         type: String,
-        enum: ["CREDIT_CARD", "DEBIT_CARD", "BANK_TRANSFER", "PAYPAL", "CASH"],
+        enum: ["CREDIT_CARD", "DEBIT_CARD", "BANK_TRANSFER", "PAYPAL"],
         required: true
     },
     reference: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        index: true
     },
+    
+    // Card and UPI specifics are no longer stored
     cardNumber: {
         type: String,
-        required: false
+        required: false,
+        select: false
     },
     upiId: {
         type: String,
-        required: false
+        required: false,
+        select: false
     },
     status: {
         type: String,
@@ -56,6 +61,15 @@ const paymentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+});
+
+// Reference field removed; no index required
+
+// No longer storing card/upi details; ensure they are unset if accidentally provided
+paymentSchema.pre('save', function(next) {
+    this.cardNumber = undefined;
+    this.upiId = undefined;
+    next();
 });
 
 // Update the updatedAt field before saving

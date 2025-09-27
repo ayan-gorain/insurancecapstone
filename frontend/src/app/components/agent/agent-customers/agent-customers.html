@@ -46,26 +46,12 @@
         <!-- Customer Info -->
         <div class="space-y-2 mb-4">
           <div class="flex justify-between">
-            <span class="text-sm text-gray-600">Phone:</span>
-            <span class="text-sm font-medium text-gray-900">{{ customer.phone || 'N/A' }}</span>
-          </div>
-          <div class="flex justify-between">
             <span class="text-sm text-gray-600">Joined:</span>
             <span class="text-sm font-medium text-gray-900">{{ customer.createdAt | date:'short' }}</span>
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex space-x-2">
-          <button (click)="viewCustomerPolicies(customer._id); $event.stopPropagation()"
-                  class="flex-1 bg-blue-50 text-blue-600 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-100 transition-colors">
-            Policies
-          </button>
-          <button (click)="viewCustomerClaims(customer._id); $event.stopPropagation()"
-                  class="flex-1 bg-green-50 text-green-600 px-3 py-2 rounded-md text-sm font-medium hover:bg-green-100 transition-colors">
-            Claims
-          </button>
-        </div>
+        
       </div>
     </div>
   </div>

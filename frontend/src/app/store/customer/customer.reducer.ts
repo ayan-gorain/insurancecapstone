@@ -51,10 +51,11 @@ export const customerReducer = createReducer(
     loading: true,
     error: null
   })),
-  on(CustomerActions.buyPolicySuccess, (state, { userPolicy }) => ({
+  on(CustomerActions.buyPolicySuccess, (state, { userPolicy, payment }) => ({
     ...state,
     loading: false,
     myPolicies: [...state.myPolicies, userPolicy],
+    lastPayment: payment,
     error: null
   })),
   on(CustomerActions.buyPolicyFailure, (state, { error }) => ({

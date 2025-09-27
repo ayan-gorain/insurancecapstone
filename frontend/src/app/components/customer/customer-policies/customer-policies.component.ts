@@ -35,8 +35,7 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     nominee: '',
     paymentMethod: 'CREDIT_CARD',
     cardNumber: '',
-    upiId: '',
-    paymentReference: ''
+    upiId: ''
   };
 
   // Purchase animation state
@@ -57,14 +56,12 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       case 'CREDIT_CARD':
       case 'DEBIT_CARD':
         return this.buyPolicyForm.cardNumber;
-      case 'BANK_TRANSFER':
-        return this.buyPolicyForm.paymentReference;
       case 'PAYPAL':
         return this.buyPolicyForm.upiId;
       case 'CASH':
         return 'CASH_PAYMENT';
       default:
-        return this.buyPolicyForm.paymentReference;
+        return '';
     }
   }
 
@@ -74,14 +71,10 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       case 'CREDIT_CARD':
       case 'DEBIT_CARD':
         return this.buyPolicyForm.cardNumber.trim().length >= 16;
-      case 'BANK_TRANSFER':
-        return this.buyPolicyForm.paymentReference.trim().length > 0;
       case 'PAYPAL':
         return this.buyPolicyForm.upiId.trim().length > 0 && this.buyPolicyForm.upiId.includes('@');
-      case 'CASH':
-        return true; // Cash doesn't need additional details
       default:
-        return this.buyPolicyForm.paymentReference.trim().length > 0;
+        return true;
     }
   }
 
@@ -295,8 +288,7 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       startDate: this.buyPolicyForm.startDate,
       termMonths: this.buyPolicyForm.termMonths,
       nominee: this.buyPolicyForm.nominee,
-      paymentMethod: this.buyPolicyForm.paymentMethod,
-      paymentReference: this.getCurrentPaymentDetails()
+      paymentMethod: this.buyPolicyForm.paymentMethod
     };
 
     this.store.dispatch(buyPolicy({ policyId: policyId, body }));
@@ -635,8 +627,7 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       nominee: '',
       paymentMethod: 'CREDIT_CARD',
       cardNumber: '',
-      upiId: '',
-      paymentReference: ''
+      upiId: ''
     };
   }
 

@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import * as PolicyActions from '../../../store/policy/policy.actions';
 import { selectPolicyLoading, selectPolicyError, selectCreatedPolicy } from '../../../store/policy/policy.selectors';
 import { RouterModule } from '@angular/router';
@@ -13,16 +13,17 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule]
 })
-export class AdminPolicyComponent {
+export class AdminPolicyComponent implements OnDestroy, OnInit {
   form: FormGroup;
   imageName: string | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   imageBase64: string | null = null;
   
   // Observable properties for state management
-  loading$: Observable<boolean>;
-  error$: Observable<string | null>;
-  createdPolicy$: Observable<any | null>;
+  loading$!: Observable<boolean>;
+  error$!: Observable<string | null>;
+  createdPolicy$!: Observable<any | null>;
+  private createdSub?: Subscription;
 
   constructor(private fb: FormBuilder, private store: Store) {
     this.form = this.fb.group({
@@ -33,11 +34,22 @@ export class AdminPolicyComponent {
       termMonths: ['', [Validators.required, Validators.min(1)]],
       minSumInsured: ['', [Validators.required, Validators.min(1000)]],
     });
+  }
 
+  ngOnInit(): void {
     // Initialize observables
     this.loading$ = this.store.select(selectPolicyLoading);
     this.error$ = this.store.select(selectPolicyError);
     this.createdPolicy$ = this.store.select(selectCreatedPolicy);
+
+    // Full page refresh after successful creation
+    this.createdSub = this.createdPolicy$.subscribe((policy) => {
+      if (policy) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -74,6 +86,12 @@ export class AdminPolicyComponent {
         this.imageBase64 = reader.result as string;
       };
       reader.readAsDataURL(file);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.createdSub) {
+      this.createdSub.unsubscribe();
     }
   }
 

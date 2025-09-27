@@ -5,19 +5,22 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { selectUser } from '../../../store/auth/auth.selectors';
 import * as AuthActions from '../../../store/auth/auth.actions';
+import { HttpClientModule } from '@angular/common/http';
+import { CustomerPolicy } from '../../../services/customer-policy';
 
 @Component({
   selector: 'app-customer-dashboard',
   templateUrl: './customer-dashboard.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, HttpClientModule],
 })
 export class CustomerDashboardComponent implements OnInit {
   user$: Observable<any | null>;
 
   constructor(
     private store: Store,
-    public router: Router
+    public router: Router,
+    private customerPolicy: CustomerPolicy,
   ) {
     this.user$ = this.store.select(selectUser);
   }
@@ -39,4 +42,6 @@ export class CustomerDashboardComponent implements OnInit {
       fallback.style.display = 'flex';
     }
   }
+
+  // Test email action removed
 }

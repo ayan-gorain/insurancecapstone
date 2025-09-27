@@ -12,7 +12,7 @@ export const loadMyPoliciesFailure = createAction('[InsuranceHub] Load My Polici
 
 
 export const buyPolicy = createAction('[InsuranceHub] Buy Policy', props<{ policyId: string, body: any }>());
-export const buyPolicySuccess = createAction('[InsuranceHub] Buy Policy Success', props<{ userPolicy: any }>());
+export const buyPolicySuccess = createAction('[InsuranceHub] Buy Policy Success', props<{ userPolicy: any, payment: any }>());
 export const buyPolicyFailure = createAction('[InsuranceHub] Buy Policy Failure', props<{ error: any }>());
 
 

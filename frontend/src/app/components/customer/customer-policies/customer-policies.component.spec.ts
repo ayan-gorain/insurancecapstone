@@ -76,14 +76,7 @@ describe('CustomerPoliciesComponent', () => {
     expect(result).toBe('1234567890123456');
   });
 
-  it('should get current payment details for bank transfer', () => {
-    component.buyPolicyForm.paymentMethod = 'BANK_TRANSFER';
-    component.buyPolicyForm.paymentReference = 'REF123';
-
-    const result = component.getCurrentPaymentDetails();
-
-    expect(result).toBe('REF123');
-  });
+  // Bank transfer reference removed; no test needed
 
   it('should get current payment details for PayPal', () => {
     component.buyPolicyForm.paymentMethod = 'PAYPAL';

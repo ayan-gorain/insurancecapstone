@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class CustomerPolicy {
   private baseUrl = environment.apiUrl;
   private claimsCache: any = null;
@@ -147,5 +147,7 @@ export class CustomerPolicy {
     this.cacheTimestamp = 0;
     console.log('Customer Service - Cache cleared');
   }
+
+  // sendTestEmail removed
 
 }

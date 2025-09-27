@@ -48,7 +48,7 @@ export class CustomerEffects {
       mergeMap(({policyId, body})=>
         this.customerPolicy.buyPolicy(policyId, body).pipe(
           map((response)=>{
-            return CustomerActions.buyPolicySuccess({userPolicy: response.userPolicy});
+            return CustomerActions.buyPolicySuccess({userPolicy: response.userPolicy, payment: response.payment});
           }),
           catchError((error)=>{
             console.error('Buy policy error:', error);

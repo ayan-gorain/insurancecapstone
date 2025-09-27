@@ -53,7 +53,9 @@ export class CustomerClaimsComponent implements OnInit {
       amount: ['', [Validators.required, Validators.min(1)]],
       policyType: ['GENERAL', Validators.required] // Added policy type field
     });
+  }
 
+  ngOnInit(): void {
     // Listen for successful claim submissions
     this.actions$.pipe(
       ofType(submitClaimSuccess, submitClaimWithoutPolicySuccess)
@@ -84,9 +86,7 @@ export class CustomerClaimsComponent implements OnInit {
         this.agentLoading = false;
       }
     });
-  }
 
-  ngOnInit(): void {
     // Load all data in parallel for better performance
     this.loadAllData();
   }

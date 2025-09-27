@@ -32,6 +32,14 @@ export class PolicyEffects {
     )
   );
 
+  // After successful creation, refresh the policies list
+  createPolicySuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PolicyActions.createPolicySuccess),
+      map(() => PolicyActions.loadPolicies())
+    )
+  );
+
   loadPolicies$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PolicyActions.loadPolicies),

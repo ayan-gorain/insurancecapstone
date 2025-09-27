@@ -4,6 +4,7 @@ export interface CustomerState{
     myClaims:any[];
     claimDetails:any;
     claimStats:any;
+    lastPayment:any;
     loading:boolean;
     error:any
 }
@@ -13,6 +14,7 @@ export const initialCustomerState:CustomerState={
     myClaims:[],
     claimDetails:null,
     claimStats:null,
+    lastPayment:null,
     loading:false,
     error:null
 }

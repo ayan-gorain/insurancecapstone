@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import cloudinary from "../config/cloudinary.js";
+import { sendEmail, buildWelcomeEmail } from "../config/email.js";
 
 dotenv.config();
 
@@ -69,6 +70,16 @@ export const userResolvers = {
       });
 
       const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, { expiresIn: "1h" });
+
+      // Fire-and-forget welcome email (non-blocking)
+      try {
+        const { subject, text, html } = buildWelcomeEmail({ name: newUser.name });
+        sendEmail({ to: newUser.email, subject, text, html }).catch((err) => {
+          console.warn("Welcome email failed:", err?.message || err);
+        });
+      } catch (e) {
+        console.warn("Welcome email build failed:", e?.message || e);
+      }
 
       return { token, user: newUser };
     },

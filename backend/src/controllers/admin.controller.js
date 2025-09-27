@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Claim from "../models/Claim.js";
 import cloudinary from "../config/cloudinary.js";
 import AuditLog from "../models/Auditlog.js";
+// Admin/Agent email notifications disabled
 import bcrypt from 'bcrypt';
 export const createPolicy = async (req, res) => {
   try {
@@ -32,6 +33,8 @@ export const createPolicy = async (req, res) => {
       actorId: req.user._id,
       details: { policyId: policy._id },
     });
+
+    // Emailing customers about new policy disabled
 
     res.status(201).json(policy);
   } catch (err) {
@@ -360,7 +363,9 @@ export const assignAgentToCustomer = async (req, res) => {
       actorId: req.user._id,
       details: { customerId, agentId }
     });
-    
+
+    // Emailing customer about agent assignment disabled
+
     res.json(updatedCustomer);
   } catch (err) {
     console.error(err);

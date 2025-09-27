@@ -11,6 +11,8 @@ import customerRoutes from "./routes/customer.route.js";
 import agentRoutes from "./routes/agent.routes.js";
 import { authMiddleware } from "./authMiddleware.js";
 import PolicyProduct from "./models/PolicyProduct.js";
+import Payment from "./models/Payment.js";
+import { verifyEmailTransporter } from "./config/email.js";
 
 dotenv.config();
 const port = process.env.PORT || 4000;
@@ -63,8 +65,11 @@ app.use("/graphql", expressMiddleware(server, {
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log("Connected to MongoDB");
+    // Verify email transporter at startup for clearer diagnostics
+    verifyEmailTransporter().catch(() => {});
+    // Reference field removed; no index maintenance required
     app.listen(process.env.PORT, () => {
       console.log(
         `Server is running at http://localhost:${process.env.PORT}/graphql`

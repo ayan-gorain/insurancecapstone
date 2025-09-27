@@ -94,39 +94,41 @@
       </ul>
     </nav>
 
-    <!-- User Info & Logout -->
-    <div class="p-4 border-t border-gray-200">
-      <div *ngIf="user$ | async as user" class="flex items-center space-x-3 mb-4">
-        <!-- User Photo or Initial -->
-        <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center">
-          <img *ngIf="user.photo && user.photo.trim()" 
-               [src]="user.photo" 
-               [alt]="user.name"
-               (error)="onImageError($event)"
-               class="w-full h-full object-cover">
-          <div *ngIf="!user.photo || !user.photo.trim()" 
-               class="w-full h-full bg-gradient-to-r from-blue-500 to-green-500 flex items-center justify-center">
-            <span class="text-white text-sm font-medium">{{ user.name?.charAt(0)?.toUpperCase() }}</span>
-          </div>
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-gray-800 text-sm font-medium truncate">{{ user.name }}</p>
-          <p class="text-gray-600 text-xs">{{ user.role | titlecase }}</p>
-        </div>
-      </div>
-      <button (click)="logout()" 
-              class="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
-        Logout
-      </button>
-    </div>
+    
   </aside>
 
   <!-- Main Content Area -->
   <div class="flex-1 flex flex-col">
     <!-- Top Header -->
-    <header class="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-sm">
-      <h2 class="text-2xl font-bold text-gray-800">Welcome back, Admin!</h2>
-      <p class="text-gray-600">Manage your insurance system from this central dashboard.</p>
+    <header class="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-sm flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Welcome back, Admin!</h2>
+        <p class="text-gray-600">Manage your insurance system from this central dashboard.</p>
+      </div>
+      <!-- User Info & Logout -->
+      <div class="flex items-center space-x-4">
+        <div *ngIf="user$ | async as user" class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
+            <img *ngIf="user.photo && user.photo.trim()" 
+                 [src]="user.photo" 
+                 [alt]="user.name"
+                 (error)="onImageError($event)"
+                 class="w-full h-full object-cover">
+            <div *ngIf="!user.photo || !user.photo.trim()" 
+                 class="w-full h-full bg-gradient-to-r from-blue-500 to-green-500 flex items-center justify-center">
+              <span class="text-white text-sm font-medium">{{ user.name?.charAt(0)?.toUpperCase() }}</span>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <p class="text-gray-800 text-sm font-medium">{{ user.name }}</p>
+            <p class="text-gray-600 text-xs">{{ user.role | titlecase }}</p>
+          </div>
+        </div>
+        <button (click)="logout()" 
+                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm">
+          Logout
+        </button>
+      </div>
     </header>
 
     <!-- Content -->
