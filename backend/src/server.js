@@ -70,10 +70,8 @@ mongoose
     // Verify email transporter at startup for clearer diagnostics
     verifyEmailTransporter().catch(() => {});
     // Reference field removed; no index maintenance required
-    app.listen(process.env.PORT, () => {
-      console.log(
-        `Server is running at http://localhost:${process.env.PORT}/graphql`
-      );
+    app.listen(port, "0.0.0.0", () => {
+      console.log(`Server is running at http://0.0.0.0:${port}/graphql`);
     });
   })
   .catch((err) => console.log("MongoDB connection error:", err));

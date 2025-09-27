@@ -25,14 +25,17 @@ FROM nginx:alpine
 COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
 
 # Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# Use envsubst at runtime to inject PORT into nginx.conf
+RUN apk add --no-cache gettext
+COPY nginx.conf /etc/nginx/templates/nginx.conf.template
+ENV PORT=80
+CMD ["/bin/sh", "-c", "envsubst '$$PORT' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'" ]
 
 # Expose port 80
+# Expose default; Render ignores EXPOSE and sets $PORT
 EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-80}/health || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
