@@ -8,7 +8,7 @@ export interface AuthState {
   export const initialAuthState: AuthState = {
     user: null,
     token: null,
-    loading: true, // Start with loading true to wait for initialization
+    loading: true, 
     error: null,
   };
   
