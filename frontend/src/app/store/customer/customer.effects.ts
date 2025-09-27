@@ -47,9 +47,7 @@ export class CustomerEffects {
       ofType(CustomerActions.buyPolicy),
       mergeMap(({policyId, body})=>
         this.customerPolicy.buyPolicy(policyId, body).pipe(
-          map((response)=>{
-            return CustomerActions.buyPolicySuccess({userPolicy: response.userPolicy, payment: response.payment});
-          }),
+          map((response)=> CustomerActions.buyPolicySuccess({userPolicy: response.userPolicy, payment: response.payment})),
           catchError((error)=>{
             console.error('Buy policy error:', error);
             const errorMessage = error.error?.message || error.message || 'Unknown error occurred';

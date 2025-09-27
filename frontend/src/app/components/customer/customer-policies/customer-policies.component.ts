@@ -47,6 +47,20 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   progressPercentage = 0;
   currentPolicyId = '';
   
+  // Date constraints
+  minStartDate = new Date().toISOString().split('T')[0];
+  
+  // UX timing
+  private successPhase1DelayMs = 1200; // wait before showing second success state
+  private successPhase2DelayMs = 1500; // wait before switching tab
+  private processingCompleteHoldMs = 700; // keep processing view briefly at 100%
+  successPhase = 0; // 0 = none, 1 = first success state, 2 = second success state
+  
+  // Purchase tracking
+  private stateSub?: Subscription;
+  private pendingPaymentRef: string = '';
+  private lastHandledPaymentRef: string = '';
+  
   // Cancel policy state
   cancellingPolicyId = '';
 
@@ -98,6 +112,49 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.checkAndCreateTestPolicies();
     }, 2000);
+    
+    // Watch for purchase success/failure via store state
+    this.stateSub = this.customerState$.subscribe(state => {
+      const lastPaymentRef = state?.lastPayment?.reference;
+      if (
+        this.isProcessingPurchase &&
+        this.pendingPaymentRef &&
+        lastPaymentRef &&
+        lastPaymentRef === this.pendingPaymentRef &&
+        this.lastHandledPaymentRef !== lastPaymentRef
+      ) {
+        // Mark handled
+        this.lastHandledPaymentRef = lastPaymentRef;
+        this.pendingPaymentRef = '';
+        
+        // Complete processing view to 5/5, hold briefly, then show success phases
+        this.purchaseError = false;
+        this.processingStep = 5;
+        this.progressPercentage = 100;
+        
+        setTimeout(() => {
+          this.purchaseSuccess = true;
+          this.successPhase = 1;
+          // Advance to second phase
+          setTimeout(() => {
+            this.successPhase = 2;
+          }, this.successPhase1DelayMs);
+          
+          // Finalize after second phase delay (do not auto-switch tab)
+          setTimeout(() => {
+            this.resetAnimationState();
+          }, this.successPhase1DelayMs + this.successPhase2DelayMs);
+        }, this.processingCompleteHoldMs);
+      }
+      
+      // Handle error case from store
+      if (this.isProcessingPurchase && state?.error) {
+        this.isProcessingPurchase = false;
+        this.purchaseError = true;
+        this.purchaseSuccess = false;
+        this.errorMessage = state.error?.message || 'Purchase failed';
+      }
+    });
   }
 
   // Check authentication status
@@ -156,6 +213,9 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     // Clean up auto-reload subscription
     if (this.autoReloadSubscription) {
       this.autoReloadSubscription.unsubscribe();
+    }
+    if (this.stateSub) {
+      this.stateSub.unsubscribe();
     }
   }
 
@@ -247,19 +307,20 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Complete processing after realistic delay
+    // Proceed with purchase after a short UX delay
     setTimeout(() => {
       this.proceedWithPurchase(policyId, selectedPolicy);
-    }, 3000); // 3 second realistic animation
+    }, 1200);
   }
 
   // Simulate realistic processing steps
   private simulateProcessingSteps(): void {
     const steps = [
-      { step: 1, progress: 25, delay: 800, message: 'Validating Policy Details' },
-      { step: 2, progress: 50, delay: 1200, message: 'Processing Payment' },
-      { step: 3, progress: 75, delay: 1000, message: 'Activating Policy' },
-      { step: 4, progress: 100, delay: 500, message: 'Finalizing Purchase' }
+      { step: 1, progress: 20, delay: 700, message: 'Validating Policy Details' },
+      { step: 2, progress: 40, delay: 900, message: 'Processing Payment' },
+      { step: 3, progress: 65, delay: 900, message: 'Activating Policy' },
+      { step: 4, progress: 85, delay: 700, message: 'Finalizing Purchase' },
+      { step: 5, progress: 100, delay: 500, message: 'Completing Verification' }
     ];
 
     let currentStep = 0;
@@ -284,44 +345,26 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   // Helper method to proceed with purchase
   private proceedWithPurchase(policyId: string, selectedPolicy: any): void {
     // Dispatch the buy policy action with the form data
-    const body = {
+    const body: any = {
       startDate: this.buyPolicyForm.startDate,
-      termMonths: this.buyPolicyForm.termMonths,
+      termMonths: Number(this.buyPolicyForm.termMonths),
       nominee: this.buyPolicyForm.nominee,
-      paymentMethod: this.buyPolicyForm.paymentMethod
+      paymentMethod: this.buyPolicyForm.paymentMethod,
+      paymentReference: `REF-${Date.now()}`
     };
 
-    this.store.dispatch(buyPolicy({ policyId: policyId, body }));
-    
-    // Simulate random success/failure for demo purposes
-    // In real app, this would be handled by the store effects
-    const isSuccess = Math.random() > 0.2; // 80% success rate for demo
-    
-    if (isSuccess) {
-      // Show success animation
-      this.purchaseSuccess = true;
-      this.purchaseError = false;
-      this.isProcessingPurchase = false;
-      
-      // Reload policies to show updated list
-      this.loadMyPolicies();
-      
-      // Auto-switch to purchased policies tab after success
-      setTimeout(() => {
-        this.activeTab = 'purchased';
-      }, 2000);
-      
-      // Reset form after a delay
-      setTimeout(() => {
-        this.resetAnimationState();
-      }, 5000);
-    } else {
-      // Show error animation
-      this.purchaseError = true;
-      this.purchaseSuccess = false;
-      this.isProcessingPurchase = false;
-      this.errorMessage = 'Payment processing failed. Please check your payment details and try again.';
+    if (this.buyPolicyForm.paymentMethod === 'CREDIT_CARD' || this.buyPolicyForm.paymentMethod === 'DEBIT_CARD') {
+      body.cardNumber = this.buyPolicyForm.cardNumber;
     }
+
+    if (this.buyPolicyForm.paymentMethod === 'PAYPAL') {
+      body.upiId = this.buyPolicyForm.upiId;
+    }
+
+    this.store.dispatch(buyPolicy({ policyId: policyId, body }));
+    this.pendingPaymentRef = body.paymentReference;
+    
+    // NOTE: Actual success/error handling is managed by NgRx effects.
   }
 
 
@@ -620,6 +663,7 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     this.processingStep = 0;
     this.progressPercentage = 0;
     this.currentPolicyId = '';
+    this.successPhase = 0;
     this.buyPolicyForm = {
       policyId: '',
       startDate: '',

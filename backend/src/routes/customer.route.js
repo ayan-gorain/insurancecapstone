@@ -36,7 +36,7 @@ router.get("/claims-stats", getClaimStats);
 router.post("/payments", recordPayment);
 router.get("/payments/user", getUserPayments);
 
-w// Agent assignment check
+// Agent assignment check
 router.get("/agent-assignment", checkAgentAssignment);
 
 // Utilities (test email removed)
