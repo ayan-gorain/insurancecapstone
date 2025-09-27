@@ -7,22 +7,16 @@
     "build": "cd frontend && npm run build && cd ../backend && npm run build",
     "start": "cd backend && npm start",
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\"",
-    "docker:build": "docker build -t insurance-system .",
-    "docker:run": "docker run -p 4000:4000 --env-file .env insurance-system",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:dev": "docker-compose --profile dev up",
-    "docker:logs": "docker-compose logs -f",
+    
     "test": "cd frontend && npm test && cd ../backend && npm test",
-    "clean": "docker-compose down -v && docker system prune -f"
+    "clean": "echo 'No docker to clean'"
   },
   "keywords": [
     "insurance",
     "angular",
     "nodejs",
     "mongodb",
-    "docker",
-    "render"
+    
   ],
   "author": "Your Name",
   "license": "MIT",
