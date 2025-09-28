@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 interface AuditLog {
   _id: string;
@@ -41,7 +42,7 @@ export class AuditLogsComponent implements OnInit {
       'Content-Type': 'application/json'
     });
 
-    const apiUrl = 'http://localhost:4000/api/v1';
+    const apiUrl = `${environment.apiUrl}/api/v1`;
 
     this.http.get<AuditLog[]>(`${apiUrl}/admin/audit`, { headers }).subscribe({
       next: (logs) => {

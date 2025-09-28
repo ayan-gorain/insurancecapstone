@@ -6,7 +6,7 @@ import { selectAllAgents, selectAllUsers } from '../../../store/user/user.select
 import { selectError, selectLoading } from '../../../store/auth/auth.selectors';
 import * as UserActions from '../../../store/user/user.action';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-// import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 
 @Component({
@@ -111,7 +111,7 @@ export class UsersAgents implements OnInit {
         'Content-Type': 'application/json'
       });
 
-      const apiUrl = 'http://localhost:4000/api/v1';
+      const apiUrl = `${environment.apiUrl}/api/v1`;
       
       const requestBody = {
         customerId: this.selectedCustomer._id,

@@ -36,6 +36,6 @@ export class PolicyService {
 
   // Public method to get policies without authentication
   getPublicPolicies(): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:4000/public/policies`);
+    return this.http.get<any[]>(`${environment.apiUrl}/public/policies`);
   }
 }

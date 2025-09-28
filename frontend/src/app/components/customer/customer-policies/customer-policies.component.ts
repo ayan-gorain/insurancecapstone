@@ -1,8 +1,10 @@
+import { environment } from './../../../../environments/environment';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, interval, Subscription } from 'rxjs';
+
 import { 
   loadAvailablePolicies, 
   loadMyPolicies, 
@@ -179,7 +181,7 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   // Test direct API call to see if the issue is with NgRx or the API
   testDirectApiCall(): void {
     console.log('Customer Policies - Testing direct API call...');
-    fetch('http://localhost:4000/api/v1/customer/policies', { 
+    fetch(`${environment.apiUrl}/api/v1/customer/policies`, { 
       headers: { 'Content-Type': 'application/json' }
     })
       .then(response => {

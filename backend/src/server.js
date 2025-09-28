@@ -36,7 +36,12 @@ app.get("/public/policies", async (req, res) => {
 });
 
 
-const server = new ApolloServer({typeDefs:userTypeDefs,resolvers:userResolvers});
+const server = new ApolloServer({
+  typeDefs: userTypeDefs,
+  resolvers: userResolvers,
+  introspection: true,
+  csrfPrevention: false
+});
 
 await server.start();
 
