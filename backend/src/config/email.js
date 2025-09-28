@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 const smtpHost = process.env.SMTP_HOST;
-const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
+const smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
 const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
 const fromEmail = process.env.MAIL_FROM || smtpUser;
@@ -10,6 +10,14 @@ let transporter = null;
 
 export function getEmailTransporter() {
   if (transporter) return transporter;
+
+  console.log("Email Config Check:", {
+    smtpHost: smtpHost ? "✓ Set" : "✗ Missing",
+    smtpPort: smtpPort,
+    smtpUser: smtpUser ? "✓ Set" : "✗ Missing", 
+    smtpPass: smtpPass ? "✓ Set" : "✗ Missing",
+    fromEmail: fromEmail
+  });
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.warn("SMTP not fully configured. Emails will be logged to console.");
@@ -35,23 +43,40 @@ export function getEmailTransporter() {
       user: smtpUser,
       pass: smtpPass,
     },
+    tls: {
+      rejectUnauthorized: false
+    }
   });
 
   return transporter;
 }
 
 export async function sendEmail({ to, subject, text, html, cc, bcc }) {
-  const tr = getEmailTransporter();
-  const info = await tr.sendMail({
-    from: fromEmail,
-    to,
-    cc,
-    bcc,
-    subject,
-    text,
-    html,
-  });
-  return info;
+  try {
+    const tr = getEmailTransporter();
+    console.log(`Attempting to send email to: ${to}, subject: ${subject}`);
+    
+    const info = await tr.sendMail({
+      from: fromEmail,
+      to,
+      cc,
+      bcc,
+      subject,
+      text,
+      html,
+    });
+    
+    console.log(`Email sent successfully. Message ID: ${info.messageId}`);
+    return info;
+  } catch (error) {
+    console.error('Email sending failed:', {
+      error: error.message,
+      code: error.code,
+      to: to,
+      subject: subject
+    });
+    throw error;
+  }
 }
 
 export async function verifyEmailTransporter() {
