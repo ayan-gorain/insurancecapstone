@@ -6,7 +6,40 @@ const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
 const fromEmail = process.env.MAIL_FROM || smtpUser;
 
+// Alternative email service configurations
+const sendGridApiKey = process.env.SENDGRID_API_KEY;
+const mailgunApiKey = process.env.MAILGUN_API_KEY;
+const mailgunDomain = process.env.MAILGUN_DOMAIN;
+
 let transporter = null;
+
+// Function to create SendGrid transporter
+function createSendGridTransporter() {
+  if (!sendGridApiKey) return null;
+  
+  return nodemailer.createTransport({
+    service: 'SendGrid',
+    auth: {
+      user: 'apikey',
+      pass: sendGridApiKey
+    }
+  });
+}
+
+// Function to create Mailgun transporter
+function createMailgunTransporter() {
+  if (!mailgunApiKey || !mailgunDomain) return null;
+  
+  return nodemailer.createTransport({
+    host: 'smtp.mailgun.org',
+    port: 587,
+    secure: false,
+    auth: {
+      user: `postmaster@${mailgunDomain}`,
+      pass: mailgunApiKey
+    }
+  });
+}
 
 export function getEmailTransporter() {
   if (transporter) return transporter;
@@ -16,11 +49,27 @@ export function getEmailTransporter() {
     smtpPort: smtpPort,
     smtpUser: smtpUser ? "✓ Set" : "✗ Missing", 
     smtpPass: smtpPass ? "✓ Set" : "✗ Missing",
-    fromEmail: fromEmail
+    fromEmail: fromEmail,
+    sendGridApiKey: sendGridApiKey ? "✓ Set" : "✗ Missing",
+    mailgunApiKey: mailgunApiKey ? "✓ Set" : "✗ Missing",
+    mailgunDomain: mailgunDomain ? "✓ Set" : "✗ Missing"
   });
 
+  // Try alternative services first (more reliable for cloud deployments)
+  if (sendGridApiKey) {
+    console.log("Using SendGrid for email delivery");
+    transporter = createSendGridTransporter();
+    return transporter;
+  }
+
+  if (mailgunApiKey && mailgunDomain) {
+    console.log("Using Mailgun for email delivery");
+    transporter = createMailgunTransporter();
+    return transporter;
+  }
+
   if (!smtpHost || !smtpUser || !smtpPass) {
-    console.warn("SMTP not fully configured. Emails will be logged to console.");
+    console.warn("No email service configured. Emails will be logged to console.");
     transporter = {
       sendMail: async (options) => {
         console.log("[DEV EMAIL] To:", options.to);
@@ -35,7 +84,8 @@ export function getEmailTransporter() {
     return transporter;
   }
 
-  transporter = nodemailer.createTransport({
+  // Enhanced configuration for better reliability
+  const transporterConfig = {
     host: smtpHost,
     port: smtpPort,
     secure: smtpPort === 465,
@@ -44,25 +94,42 @@ export function getEmailTransporter() {
       pass: smtpPass,
     },
     tls: {
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
+      ciphers: 'SSLv3'
     },
-    connectionTimeout: 60000, // 60 seconds
-    greetingTimeout: 30000,   // 30 seconds
-    socketTimeout: 60000,     // 60 seconds
-    pool: true,
+    connectionTimeout: 30000, // 30 seconds
+    greetingTimeout: 15000,   // 15 seconds
+    socketTimeout: 30000,     // 30 seconds
+    pool: false, // Disable pooling for better reliability
     maxConnections: 1,
-    maxMessages: 3,
-    rateDelta: 20000,
-    rateLimit: 5
-  });
+    maxMessages: 1,
+    rateDelta: 10000,
+    rateLimit: 1,
+    // Additional options for better compatibility
+    ignoreTLS: false,
+    requireTLS: true,
+    debug: process.env.NODE_ENV === 'development'
+  };
+
+  // Special handling for Gmail
+  if (smtpHost && smtpHost.includes('gmail.com')) {
+    transporterConfig.service = 'gmail';
+    delete transporterConfig.host;
+    delete transporterConfig.port;
+    delete transporterConfig.secure;
+  }
+
+  transporter = nodemailer.createTransport(transporterConfig);
 
   return transporter;
 }
 
-export async function sendEmail({ to, subject, text, html, cc, bcc }) {
+export async function sendEmail({ to, subject, text, html, cc, bcc }, retryCount = 0) {
+  const maxRetries = 2;
+  
   try {
     const tr = getEmailTransporter();
-    console.log(`Attempting to send email to: ${to}, subject: ${subject}`);
+    console.log(`Attempting to send email to: ${to}, subject: ${subject} (attempt ${retryCount + 1})`);
     
     // Add timeout wrapper for email sending
     const emailPromise = tr.sendMail({
@@ -76,7 +143,7 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }) {
     });
     
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Email sending timeout after 30 seconds')), 30000);
+      setTimeout(() => reject(new Error('Email sending timeout after 20 seconds')), 20000);
     });
     
     const info = await Promise.race([emailPromise, timeoutPromise]);
@@ -88,8 +155,21 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }) {
       error: error.message,
       code: error.code,
       to: to,
-      subject: subject
+      subject: subject,
+      attempt: retryCount + 1
     });
+    
+    // Retry logic for transient errors
+    if (retryCount < maxRetries && (
+      error.message.includes('timeout') || 
+      error.message.includes('ECONNRESET') ||
+      error.message.includes('ETIMEDOUT') ||
+      error.code === 'ECONNREFUSED'
+    )) {
+      console.log(`Retrying email send in 2 seconds... (${retryCount + 1}/${maxRetries})`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return sendEmail({ to, subject, text, html, cc, bcc }, retryCount + 1);
+    }
     
     // Don't throw error in production to prevent app crashes
     // Just log the failure and continue
