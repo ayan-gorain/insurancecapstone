@@ -45,7 +45,15 @@ export function getEmailTransporter() {
     },
     tls: {
       rejectUnauthorized: false
-    }
+    },
+    connectionTimeout: 60000, // 60 seconds
+    greetingTimeout: 30000,   // 30 seconds
+    socketTimeout: 60000,     // 60 seconds
+    pool: true,
+    maxConnections: 1,
+    maxMessages: 3,
+    rateDelta: 20000,
+    rateLimit: 5
   });
 
   return transporter;
@@ -56,7 +64,8 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }) {
     const tr = getEmailTransporter();
     console.log(`Attempting to send email to: ${to}, subject: ${subject}`);
     
-    const info = await tr.sendMail({
+    // Add timeout wrapper for email sending
+    const emailPromise = tr.sendMail({
       from: fromEmail,
       to,
       cc,
@@ -65,6 +74,12 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }) {
       text,
       html,
     });
+    
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Email sending timeout after 30 seconds')), 30000);
+    });
+    
+    const info = await Promise.race([emailPromise, timeoutPromise]);
     
     console.log(`Email sent successfully. Message ID: ${info.messageId}`);
     return info;
@@ -75,6 +90,14 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }) {
       to: to,
       subject: subject
     });
+    
+    // Don't throw error in production to prevent app crashes
+    // Just log the failure and continue
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Email sending failed but continuing execution in production mode');
+      return { messageId: 'failed-' + Date.now() };
+    }
+    
     throw error;
   }
 }

@@ -15,7 +15,7 @@ import Payment from "./models/Payment.js";
 import { verifyEmailTransporter } from "./config/email.js";
 
 dotenv.config();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 10000;
 const app = express();
 app.use(cors());
 app.use(express.json({limit:"70mb"}));
@@ -23,6 +23,16 @@ app.use(express.json({limit:"70mb"}));
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/agent", agentRoutes);
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ 
+    status: "healthy", 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    port: port
+  });
+});
 
 // Public route for policies (no authentication required)
 app.get("/public/policies", async (req, res) => {
@@ -75,9 +85,9 @@ mongoose
     // Verify email transporter at startup for clearer diagnostics
     verifyEmailTransporter().catch(() => {});
     // Reference field removed; no index maintenance required
-    app.listen(process.env.PORT, () => {
+    app.listen(port, () => {
       console.log(
-        `Server is running at http://localhost:${process.env.PORT}/graphql`
+        `Server is running at http://localhost:${port}/graphql`
       );
     });
   })
