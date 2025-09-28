@@ -12,8 +12,7 @@ export const customerReducer = createReducer(
     error: null
   })),
   on(CustomerActions.loadAvailablePoliciesSuccess, (state, { policies }) => {
-    console.log('Customer Reducer - loadAvailablePoliciesSuccess:', policies);
-    console.log('Customer Reducer - Policies count:', policies?.length || 0);
+   
     return {
       ...state,
       loading: false,
