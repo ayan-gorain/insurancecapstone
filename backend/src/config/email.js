@@ -51,9 +51,9 @@ export function getEmailTransporter() {
       rejectUnauthorized: false,
       ciphers: 'SSLv3'
     },
-    connectionTimeout: 120000, // 2 minutes
-    greetingTimeout: 60000,   // 1 minute
-    socketTimeout: 120000,     // 2 minutes
+    connectionTimeout: 600000, // 10 minutes
+    greetingTimeout: 300000,   // 5 minutes
+    socketTimeout: 600000,     // 10 minutes
     pool: false, // Disable pooling for better reliability
     maxConnections: 1,
     maxMessages: 1,
@@ -97,7 +97,7 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }, retryCount
     });
     
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Email sending timeout after 3 minutes')), 180000);
+      setTimeout(() => reject(new Error('Email sending timeout after 10 minutes')), 600000);
     });
     
     const info = await Promise.race([emailPromise, timeoutPromise]);
