@@ -6,40 +6,10 @@ const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
 const fromEmail = process.env.MAIL_FROM || smtpUser;
 
-// Alternative email service configurations
-const sendGridApiKey = process.env.SENDGRID_API_KEY;
-const mailgunApiKey = process.env.MAILGUN_API_KEY;
-const mailgunDomain = process.env.MAILGUN_DOMAIN;
+// Email service configurations
 
 let transporter = null;
 
-// Function to create SendGrid transporter
-function createSendGridTransporter() {
-  if (!sendGridApiKey) return null;
-  
-  return nodemailer.createTransport({
-    service: 'SendGrid',
-    auth: {
-      user: 'apikey',
-      pass: sendGridApiKey
-    }
-  });
-}
-
-// Function to create Mailgun transporter
-function createMailgunTransporter() {
-  if (!mailgunApiKey || !mailgunDomain) return null;
-  
-  return nodemailer.createTransport({
-    host: 'smtp.mailgun.org',
-    port: 587,
-    secure: false,
-    auth: {
-      user: `postmaster@${mailgunDomain}`,
-      pass: mailgunApiKey
-    }
-  });
-}
 
 export function getEmailTransporter() {
   if (transporter) return transporter;
@@ -49,24 +19,8 @@ export function getEmailTransporter() {
     smtpPort: smtpPort,
     smtpUser: smtpUser ? "✓ Set" : "✗ Missing", 
     smtpPass: smtpPass ? "✓ Set" : "✗ Missing",
-    fromEmail: fromEmail,
-    sendGridApiKey: sendGridApiKey ? "✓ Set" : "✗ Missing",
-    mailgunApiKey: mailgunApiKey ? "✓ Set" : "✗ Missing",
-    mailgunDomain: mailgunDomain ? "✓ Set" : "✗ Missing"
+    fromEmail: fromEmail
   });
-
-  // Try alternative services first (more reliable for cloud deployments)
-  if (sendGridApiKey) {
-    console.log("Using SendGrid for email delivery");
-    transporter = createSendGridTransporter();
-    return transporter;
-  }
-
-  if (mailgunApiKey && mailgunDomain) {
-    console.log("Using Mailgun for email delivery");
-    transporter = createMailgunTransporter();
-    return transporter;
-  }
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.warn("No email service configured. Emails will be logged to console.");
@@ -97,9 +51,9 @@ export function getEmailTransporter() {
       rejectUnauthorized: false,
       ciphers: 'SSLv3'
     },
-    connectionTimeout: 30000, // 30 seconds
-    greetingTimeout: 15000,   // 15 seconds
-    socketTimeout: 30000,     // 30 seconds
+    connectionTimeout: 120000, // 2 minutes
+    greetingTimeout: 60000,   // 1 minute
+    socketTimeout: 120000,     // 2 minutes
     pool: false, // Disable pooling for better reliability
     maxConnections: 1,
     maxMessages: 1,
@@ -143,7 +97,7 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }, retryCount
     });
     
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Email sending timeout after 20 seconds')), 20000);
+      setTimeout(() => reject(new Error('Email sending timeout after 3 minutes')), 180000);
     });
     
     const info = await Promise.race([emailPromise, timeoutPromise]);
