@@ -115,7 +115,8 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     }, 2000);
     
     // Watch for purchase success/failure via store state
-    this.stateSub = this.customerState$.subscribe(state => {
+    if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+      this.stateSub = this.customerState$.subscribe(state => {
       const lastPaymentRef = state?.lastPayment?.reference;
       if (
         this.isProcessingPurchase &&
@@ -155,7 +156,8 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
         this.purchaseSuccess = false;
         this.errorMessage = state.error?.message || 'Purchase failed';
       }
-    });
+      });
+    }
   }
 
   // Check authentication status
@@ -164,9 +166,11 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     console.log('Customer Policies - Token status:', token ? 'Present' : 'Missing');
     console.log('Customer Policies - Token value:', token ? token.substring(0, 20) + '...' : 'None');
     
-    this.user$.subscribe(user => {
-      console.log('Customer Policies - User state:', user);
-    });
+    if (this.user$ && typeof (this.user$ as any).subscribe === 'function') {
+      this.user$.subscribe(user => {
+        console.log('Customer Policies - User state:', user);
+      });
+    }
 
     // Direct API test to bypass NgRx
     this.testDirectApiCall();
@@ -201,10 +205,12 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   checkAndCreateTestPolicies(): void {
     let availablePolicies: any[] = [];
     
-    const stateSubscription = this.customerState$.subscribe(state => {
-      availablePolicies = state.availablePolicies || [];
-    });
-    stateSubscription.unsubscribe();
+    if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+      const stateSubscription = this.customerState$.subscribe(state => {
+        availablePolicies = state.availablePolicies || [];
+      });
+      stateSubscription.unsubscribe();
+    }
     
     console.log('Available policies count:', availablePolicies.length);
   }
@@ -290,16 +296,18 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     let selectedPolicy: any = null;
     let availablePolicies: any[] = [];
     
-    const stateSubscription = this.customerState$.subscribe(state => {
-      availablePolicies = state.availablePolicies || [];
-      selectedPolicy = availablePolicies.find((policy: any) => 
-        policy._id === policyId || 
-        policy.id === policyId ||
-        policy._id?.toString() === policyId?.toString() ||
-        policy.id?.toString() === policyId?.toString()
-      );
-    });
-    stateSubscription.unsubscribe();
+    if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+      const stateSubscription = this.customerState$.subscribe(state => {
+        availablePolicies = state.availablePolicies || [];
+        selectedPolicy = availablePolicies.find((policy: any) => 
+          policy._id === policyId || 
+          policy.id === policyId ||
+          policy._id?.toString() === policyId?.toString() ||
+          policy.id?.toString() === policyId?.toString()
+        );
+      });
+      stateSubscription.unsubscribe();
+    }
 
     if (!selectedPolicy) {
       console.error('Policy not found. Available policy IDs:', availablePolicies.map((p: any) => p._id || p.id));
@@ -374,10 +382,12 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     return new Promise((resolve) => {
       // First, try to get current policies
       let currentPolicies: any[] = [];
-      const subscription = this.customerState$.subscribe(state => {
-        currentPolicies = state.availablePolicies || [];
-      });
-      subscription.unsubscribe();
+      if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+        const subscription = this.customerState$.subscribe(state => {
+          currentPolicies = state.availablePolicies || [];
+        });
+        subscription.unsubscribe();
+      }
       
       if (currentPolicies.length > 0) {
         console.log('Policies already loaded:', currentPolicies.length);
@@ -392,21 +402,25 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       let attempts = 0;
       const maxAttempts = 20; // 10 seconds total
       
-      const checkSubscription = this.customerState$.subscribe(state => {
-        attempts++;
-        const policies = state.availablePolicies || [];
-        console.log(`Checking for policies (attempt ${attempts}/${maxAttempts}):`, policies.length);
-        
-        if (policies.length > 0) {
-          console.log('Policies loaded successfully:', policies.length);
-          checkSubscription.unsubscribe();
-          resolve();
-        } else if (attempts >= maxAttempts) {
-          console.warn('Timeout waiting for policies to load');
-          checkSubscription.unsubscribe();
-          resolve();
-        }
-      });
+      if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+        const checkSubscription = this.customerState$.subscribe(state => {
+          attempts++;
+          const policies = state.availablePolicies || [];
+          console.log(`Checking for policies (attempt ${attempts}/${maxAttempts}):`, policies.length);
+          
+          if (policies.length > 0) {
+            console.log('Policies loaded successfully:', policies.length);
+            checkSubscription.unsubscribe();
+            resolve();
+          } else if (attempts >= maxAttempts) {
+            console.warn('Timeout waiting for policies to load');
+            checkSubscription.unsubscribe();
+            resolve();
+          }
+        });
+      } else {
+        resolve();
+      }
     });
   }
 
@@ -415,15 +429,17 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     let availablePolicies: any[] = [];
     let selectedPolicy: any = null;
     
-    const stateSubscription = this.customerState$.subscribe(state => {
-      availablePolicies = state.availablePolicies || [];
-      selectedPolicy = availablePolicies.find((policy: any) => 
-        policy._id === policyId || 
-        policy.id === policyId ||
-        policy._id?.toString() === policyId?.toString()
-      );
-    });
-    stateSubscription.unsubscribe();
+    if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+      const stateSubscription = this.customerState$.subscribe(state => {
+        availablePolicies = state.availablePolicies || [];
+        selectedPolicy = availablePolicies.find((policy: any) => 
+          policy._id === policyId || 
+          policy.id === policyId ||
+          policy._id?.toString() === policyId?.toString()
+        );
+      });
+      stateSubscription.unsubscribe();
+    }
     
     if (!selectedPolicy) {
       alert(`Policy not found. Available policies: ${availablePolicies.length}. Please refresh the page and try again.`);
@@ -496,11 +512,13 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       let availablePolicies: any[] = [];
       let policy: any = null;
       
-      const stateSubscription = this.customerState$.subscribe(state => {
-        availablePolicies = state.availablePolicies || [];
-        policy = availablePolicies.find((p: any) => p._id === policyId || p.id === policyId);
-      });
-      stateSubscription.unsubscribe();
+      if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+        const stateSubscription = this.customerState$.subscribe(state => {
+          availablePolicies = state.availablePolicies || [];
+          policy = availablePolicies.find((p: any) => p._id === policyId || p.id === policyId);
+        });
+        stateSubscription.unsubscribe();
+      }
       
       if (policy) {
         console.log('Policy found and ready for purchase:', policy.title);
@@ -525,10 +543,12 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   canBuySpecificPolicy(policyId: string): boolean {
     let myPolicies: any[] = [];
     
-    const stateSubscription = this.customerState$.subscribe(state => {
-      myPolicies = state.myPolicies || [];
-    });
-    stateSubscription.unsubscribe();
+    if (this.customerState$ && typeof (this.customerState$ as any).subscribe === 'function') {
+      const stateSubscription = this.customerState$.subscribe(state => {
+        myPolicies = state.myPolicies || [];
+      });
+      stateSubscription.unsubscribe();
+    }
     
     return !myPolicies.some((myPolicy: any) => 
       myPolicy.policyProductId?._id === policyId && 

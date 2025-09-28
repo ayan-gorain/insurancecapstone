@@ -11,12 +11,12 @@ export const getAvailablePolicies = async (req, res) => {
     try {
         console.log('getAvailablePolicies called by user:', req.user?.email, req.user?.role);
         
-        // Get user with assigned agent information
+        
         const user = await User.findById(req.user._id)
             .populate('assignedAgentId', 'name email');
         
         const policies = await PolicyProduct.find();
-        console.log('Found policies in database:', policies.length);
+        
         
         // Add assigned agent info to each policy
         const policiesWithAgent = policies.map(policy => ({
