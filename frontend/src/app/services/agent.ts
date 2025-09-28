@@ -12,119 +12,47 @@ export class AgentService {
 
   // Profile Methods
   getMyProfile(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.apiUrl}/profile`, { headers });
+    return this.http.get(`${this.apiUrl}/profile`);
   }
 
   updateMyProfile(profile: any): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.put(`${this.apiUrl}/profile`, profile, { headers });
+    return this.http.put(`${this.apiUrl}/profile`, profile);
   }
 
   // Customer Methods
   getMyCustomers(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.apiUrl}/customers`, { headers });
+    return this.http.get(`${this.apiUrl}/customers`);
   }
 
   getCustomerPolicies(customerId: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.apiUrl}/customers/${customerId}/policies`, { headers });
+    return this.http.get(`${this.apiUrl}/customers/${customerId}/policies`);
   }
 
   getCustomerClaims(customerId: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.apiUrl}/customers/${customerId}/claims`, { headers });
+    return this.http.get(`${this.apiUrl}/customers/${customerId}/claims`);
   }
 
   // Claims Methods
   getMyCustomersClaims(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.apiUrl}/claims`, { headers });
+    return this.http.get(`${this.apiUrl}/claims`);
   }
 
   getPendingClaims(): Observable<any> {
-    const token = localStorage.getItem('token');
-    console.log('Agent Service - Get Pending Claims - Token present:', !!token);
-    console.log('Agent Service - Get Pending Claims - Token value:', token ? token.substring(0, 20) + '...' : 'No token');
-    
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    
     const url = `${this.apiUrl}/claims/pending`;
-    console.log('Agent Service - Get Pending Claims - URL:', url);
-    console.log('Agent Service - Get Pending Claims - Headers:', headers);
-    
-    return this.http.get(url, { headers });
+    return this.http.get(url);
   }
 
   getClaimDetails(claimId: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.apiUrl}/claims/${claimId}`, { headers });
+    return this.http.get(`${this.apiUrl}/claims/${claimId}`);
   }
 
   reviewClaim(claimId: string, reviewData: any): Observable<any> {
-    const token = localStorage.getItem('token');
-    console.log('Agent Service - Review Claim - Claim ID:', claimId);
-    console.log('Agent Service - Review Claim - Review Data:', reviewData);
-    console.log('Agent Service - Review Claim - Token present:', !!token);
-    
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    
     const url = `${this.apiUrl}/claims/${claimId}/review`;
-    console.log('Agent Service - Review Claim - URL:', url);
-    console.log('Agent Service - Review Claim - Headers:', headers);
-    
-    return this.http.put(url, reviewData, { headers });
+    return this.http.put(url, reviewData);
   }
 
   // Statistics Methods
   getMyClaimStats(): Observable<any> {
-    const token = localStorage.getItem('token');
-    console.log('Agent Service - Token present:', !!token);
-    console.log('Agent Service - Token value:', token ? token.substring(0, 20) + '...' : 'No token');
-    
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    
-    console.log('Agent Service - Making request to:', `${this.apiUrl}/stats`);
-    console.log('Agent Service - Headers:', headers);
-    
-    return this.http.get(`${this.apiUrl}/stats`, { headers });
+    return this.http.get(`${this.apiUrl}/stats`);
   }
 }

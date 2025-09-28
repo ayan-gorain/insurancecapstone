@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -21,39 +21,17 @@ export class PolicyService {
   constructor(private http: HttpClient) {}
 
   createPolicy(policyData: PolicyData): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    return this.http.post(`${this.apiUrl}/admin/policies`, policyData, { headers });
+    return this.http.post(`${this.apiUrl}/admin/policies`, policyData);
   }
 
   getPolicies(): Observable<any[]> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-
-    return this.http.get<any[]>(`${this.apiUrl}/admin/policies`, { headers });
+    return this.http.get<any[]>(`${this.apiUrl}/admin/policies`);
   }
   deletePolicy(policyId: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    return this.http.delete(`${this.apiUrl}/admin/policies/${policyId}`, { headers });
+    return this.http.delete(`${this.apiUrl}/admin/policies/${policyId}`);
   }
   updatePolicy(policyid: string, policyData: Partial<PolicyData>): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-    return this.http.put(`${this.apiUrl}/admin/policies/${policyid}`, policyData, { headers });
+    return this.http.put(`${this.apiUrl}/admin/policies/${policyid}`, policyData);
   }
 
   // Public method to get policies without authentication

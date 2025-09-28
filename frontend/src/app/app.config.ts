@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideApollo } from 'apollo-angular';
 import { InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
@@ -25,12 +25,13 @@ import { customerReducer } from './store/customer/customer.reducer';
 import { AgentEffects } from './store/agent/agent.effects';
 import { agentReducer } from './store/agent/agent.reducer';
 import { AgentService } from './services/agent';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideApollo(() => {
       const httpClient = inject(HttpClient);
       const httpLink = new HttpLink(httpClient);

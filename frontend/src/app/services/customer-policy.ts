@@ -15,68 +15,31 @@ export class CustomerPolicy {
   constructor(private http: HttpClient) {}
   
   getAvailablePolicies(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    
-    return this.http.get(`${this.baseUrl}/customer/policies`, { headers });
+    return this.http.get(`${this.baseUrl}/customer/policies`);
   }  
   
   getMyPolicies(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.baseUrl}/customer/my-policies`, { headers });
+    return this.http.get(`${this.baseUrl}/customer/my-policies`);
   }
   
   buyPolicy(policyId: string, body: any): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.post(`${this.baseUrl}/customer/policies/${policyId}/purchase`, body, { headers });
+    return this.http.post(`${this.baseUrl}/customer/policies/${policyId}/purchase`, body);
   }
   
   cancelPolicy(policyId: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.put(`${this.baseUrl}/customer/my-policies/${policyId}/cancel`, {}, { headers });
+    return this.http.put(`${this.baseUrl}/customer/my-policies/${policyId}/cancel`, {});
   }
 
   // Claim methods
   submitClaim(claimData: any): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.post(`${this.baseUrl}/customer/claims`, claimData, { headers });
+    return this.http.post(`${this.baseUrl}/customer/claims`, claimData);
   }
 
   submitClaimWithoutPolicy(claimData: any): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.post(`${this.baseUrl}/customer/claims/without-policy`, claimData, { headers });
+    return this.http.post(`${this.baseUrl}/customer/claims/without-policy`, claimData);
   }
 
   getMyClaims(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    
     // Check cache first
     const now = Date.now();
     if (this.claimsCache && (now - this.cacheTimestamp) < this.CACHE_DURATION) {
@@ -87,7 +50,7 @@ export class CustomerPolicy {
       });
     }
     
-    return this.http.get(`${this.baseUrl}/customer/claims`, { headers }).pipe(
+    return this.http.get(`${this.baseUrl}/customer/claims`).pipe(
       tap(claims => {
         this.claimsCache = claims;
         this.cacheTimestamp = now;
@@ -97,21 +60,10 @@ export class CustomerPolicy {
   }
 
   getClaimDetails(claimId: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.baseUrl}/customer/claims/${claimId}`, { headers });
+    return this.http.get(`${this.baseUrl}/customer/claims/${claimId}`);
   }
 
   getClaimStats(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    
     // Check cache first
     const now = Date.now();
     if (this.statsCache && (now - this.cacheTimestamp) < this.CACHE_DURATION) {
@@ -122,7 +74,7 @@ export class CustomerPolicy {
       });
     }
     
-    return this.http.get(`${this.baseUrl}/customer/claims-stats`, { headers }).pipe(
+    return this.http.get(`${this.baseUrl}/customer/claims-stats`).pipe(
       tap(stats => {
         this.statsCache = stats;
         this.cacheTimestamp = now;
@@ -132,12 +84,7 @@ export class CustomerPolicy {
   }
 
   checkAgentAssignment(): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    return this.http.get(`${this.baseUrl}/customer/agent-assignment`, { headers });
+    return this.http.get(`${this.baseUrl}/customer/agent-assignment`);
   }
 
   // Clear cache when new data is submitted
