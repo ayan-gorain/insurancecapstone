@@ -33,9 +33,7 @@ export class SummaryDashboardComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
 

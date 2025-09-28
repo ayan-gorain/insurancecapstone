@@ -69,11 +69,7 @@ export class AuthService {
             }
           }
         `,
-        context: {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+        context: {}
       } as any)
       .pipe(map((res: any) => res.data.me));
   }

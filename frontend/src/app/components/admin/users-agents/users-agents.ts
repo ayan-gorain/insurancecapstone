@@ -107,9 +107,7 @@ export class UsersAgents implements OnInit {
   assignAgentToCustomer() {
     if (this.selectedCustomer && this.selectedAgent) {
       
-      const token = localStorage.getItem('token');
       const headers = new HttpHeaders({
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       });
 

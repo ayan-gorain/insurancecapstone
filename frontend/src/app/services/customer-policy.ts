@@ -6,7 +6,7 @@ import { tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerPolicy {
-  private baseUrl = environment.apiUrl;
+  private baseUrl = `${environment.apiUrl}/api/v1`;
   private claimsCache: any = null;
   private statsCache: any = null;
   private cacheTimestamp: number = 0;

@@ -10,15 +10,13 @@ import * as UserActions from './user.action';
 export class UserEffects {
   private actions$ = inject(Actions);
   private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl || 'http://localhost:4000/api/v1';
+  private apiUrl = `${environment.apiUrl}/api/v1`;
 
   loadUsers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UserActions.loadUsers),
       switchMap(() => {
-        const token = localStorage.getItem('token');
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         });
 
@@ -36,9 +34,7 @@ export class UserEffects {
     this.actions$.pipe(
       ofType(UserActions.createAgent),
       switchMap(({ name, email, password, role, address, photo }) => {
-        const token = localStorage.getItem('token');
         const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         });
 

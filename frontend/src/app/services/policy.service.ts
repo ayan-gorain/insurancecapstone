@@ -16,7 +16,7 @@ export interface PolicyData {
 
 @Injectable({ providedIn: 'root' })
 export class PolicyService {
-  private apiUrl = environment.apiUrl || 'http://localhost:3000';
+  private apiUrl = `${environment.apiUrl}/api/v1`;
 
   constructor(private http: HttpClient) {}
 

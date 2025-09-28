@@ -178,14 +178,10 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
 
   // Test direct API call to see if the issue is with NgRx or the API
   testDirectApiCall(): void {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-    
     console.log('Customer Policies - Testing direct API call...');
-    fetch('http://localhost:4000/api/v1/customer/policies', { headers })
+    fetch('http://localhost:4000/api/v1/customer/policies', { 
+      headers: { 'Content-Type': 'application/json' }
+    })
       .then(response => {
         console.log('Customer Policies - Direct API response status:', response.status);
         return response.json();
