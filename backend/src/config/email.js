@@ -71,6 +71,14 @@ export function getEmailTransporter() {
     delete transporterConfig.host;
     delete transporterConfig.port;
     delete transporterConfig.secure;
+    // Gmail specific settings
+    transporterConfig.auth = {
+      user: smtpUser,
+      pass: smtpPass,
+    };
+    transporterConfig.tls = {
+      rejectUnauthorized: false
+    };
   }
 
   transporter = nodemailer.createTransport(transporterConfig);
@@ -108,9 +116,18 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }, retryCount
     console.error('Email sending failed:', {
       error: error.message,
       code: error.code,
+      response: error.response,
+      responseCode: error.responseCode,
+      command: error.command,
       to: to,
       subject: subject,
-      attempt: retryCount + 1
+      attempt: retryCount + 1,
+      smtpConfig: {
+        host: smtpHost,
+        port: smtpPort,
+        user: smtpUser ? 'Set' : 'Missing',
+        pass: smtpPass ? 'Set' : 'Missing'
+      }
     });
     
     // Retry logic for transient errors
@@ -176,6 +193,3 @@ export function buildPolicyPurchaseEmail({ name, policyTitle, startDate, endDate
 }
 
 // Removed admin/agent email builders to keep it simple
-
-
-//dd
