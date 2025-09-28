@@ -49,6 +49,7 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   
   // Date constraints
   minStartDate = new Date().toISOString().split('T')[0];
+  buyPolicyEndDate = '';
   
   // UX timing
   private successPhase1DelayMs = 1200; // wait before showing second success state
@@ -486,6 +487,9 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
   setPolicyForPurchase(policyId: string): void {
     console.log('Setting policy for purchase:', policyId);
     this.buyPolicyForm.policyId = policyId;
+    // Default start date to today and compute end date
+    this.buyPolicyForm.startDate = this.minStartDate;
+    this.updateEndDate();
     
     // Ensure policies are loaded when setting policy for purchase
     this.ensurePoliciesLoaded().then(() => {
@@ -664,6 +668,7 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
     this.progressPercentage = 0;
     this.currentPolicyId = '';
     this.successPhase = 0;
+    this.buyPolicyEndDate = '';
     this.buyPolicyForm = {
       policyId: '',
       startDate: '',
@@ -673,6 +678,27 @@ export class CustomerPoliciesComponent implements OnInit, OnDestroy {
       cardNumber: '',
       upiId: ''
     };
+  }
+
+  // Update computed end date when start date or term changes
+  updateEndDate(): void {
+    try {
+      const start = new Date(this.buyPolicyForm.startDate);
+      if (isNaN(start.getTime())) {
+        this.buyPolicyEndDate = '';
+        return;
+      }
+      const months = Number(this.buyPolicyForm.termMonths) || 0;
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + months);
+      // Format as YYYY-MM-DD for consistency with date inputs
+      const yyyy = end.getFullYear();
+      const mm = String(end.getMonth() + 1).padStart(2, '0');
+      const dd = String(end.getDate()).padStart(2, '0');
+      this.buyPolicyEndDate = `${yyyy}-${mm}-${dd}`;
+    } catch {
+      this.buyPolicyEndDate = '';
+    }
   }
 
 }
