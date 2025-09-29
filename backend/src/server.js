@@ -45,33 +45,6 @@ app.get("/public/policies", async (req, res) => {
   }
 });
 
-// Test email endpoint for debugging
-app.post("/test-email", async (req, res) => {
-  try {
-    const { sendEmail, buildWelcomeEmail } = await import("./config/email.js");
-    const { to = "goraiayan108@gmail.com" } = req.body;
-    
-    console.log("Testing email to:", to);
-    const { subject, text, html } = buildWelcomeEmail({ name: "Test User" });
-    
-    const result = await sendEmail({ to, subject, text, html });
-    
-    res.json({ 
-      success: true, 
-      messageId: result.messageId,
-      message: "Test email sent successfully" 
-    });
-  } catch (error) {
-    console.error("Test email failed:", error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message,
-      details: error 
-    });
-  }
-});
-
-
 const server = new ApolloServer({
   typeDefs: userTypeDefs,
   resolvers: userResolvers,
