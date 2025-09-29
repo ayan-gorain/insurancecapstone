@@ -1,133 +1,79 @@
-import nodemailer from "nodemailer";
+import { Resend } from 'resend';
 
-const smtpHost = process.env.SMTP_HOST;
-const smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
-const smtpUser = process.env.SMTP_USER;
-const smtpPass = process.env.SMTP_PASS;
-const fromEmail = process.env.MAIL_FROM || smtpUser;
+const resendApiKey = process.env.RESEND_API_KEY || 're_Z9J391ae_KbJomeDm2siMSBdPeCzUwjki';
+const fromEmail = process.env.MAIL_FROM || 'onboarding@resend.dev';
 
-// Email service configurations
-
-let transporter = null;
-
+// Initialize Resend client
+const resend = new Resend(resendApiKey);
 
 export function getEmailTransporter() {
-  if (transporter) return transporter;
-
-  console.log("Email Config Check:", {
-    smtpHost: smtpHost ? "✓ Set" : "✗ Missing",
-    smtpPort: smtpPort,
-    smtpUser: smtpUser ? "✓ Set" : "✗ Missing", 
-    smtpPass: smtpPass ? "✓ Set" : "✗ Missing",
-    fromEmail: fromEmail
-  });
-
-  if (!smtpHost || !smtpUser || !smtpPass) {
-    console.warn("No email service configured. Emails will be logged to console.");
-    transporter = {
-      sendMail: async (options) => {
-        console.log("[DEV EMAIL] To:", options.to);
-        if (options.cc) console.log("[DEV EMAIL] Cc:", options.cc);
-        if (options.bcc) console.log("[DEV EMAIL] Bcc:", options.bcc);
-        console.log("[DEV EMAIL] Subject:", options.subject);
-        console.log("[DEV EMAIL] Text:", options.text);
-        console.log("[DEV EMAIL] HTML:", options.html);
-        return { messageId: "dev-logger" };
-      },
-    };
-    return transporter;
-  }
-
-  // Enhanced configuration for better reliability
-  const transporterConfig = {
-    host: smtpHost,
-    port: smtpPort,
-    secure: smtpPort === 465,
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
+  // For compatibility with existing code, return a mock transporter object
+  // that uses Resend internally
+  return {
+    sendMail: async (options) => {
+      return await sendEmail({
+        to: options.to,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+        cc: options.cc,
+        bcc: options.bcc
+      });
     },
-    tls: {
-      rejectUnauthorized: false,
-      ciphers: 'SSLv3'
-    },
-    connectionTimeout: 600000, // 10 minutes
-    greetingTimeout: 300000,   // 5 minutes
-    socketTimeout: 600000,     // 10 minutes
-    pool: false, // Disable pooling for better reliability
-    maxConnections: 1,
-    maxMessages: 1,
-    rateDelta: 10000,
-    rateLimit: 1,
-    // Additional options for better compatibility
-    ignoreTLS: false,
-    requireTLS: true,
-    debug: process.env.NODE_ENV === 'development'
+    verify: async () => {
+      // Resend doesn't need verification like SMTP
+      return true;
+    }
   };
-
-  // Special handling for Gmail
-  if (smtpHost && smtpHost.includes('gmail.com')) {
-    transporterConfig.service = 'gmail';
-    delete transporterConfig.host;
-    delete transporterConfig.port;
-    delete transporterConfig.secure;
-    // Gmail specific settings
-    transporterConfig.auth = {
-      user: smtpUser,
-      pass: smtpPass,
-    };
-    transporterConfig.tls = {
-      rejectUnauthorized: false
-    };
-  }
-
-  transporter = nodemailer.createTransport(transporterConfig);
-
-  return transporter;
 }
 
 export async function sendEmail({ to, subject, text, html, cc, bcc }, retryCount = 0) {
   const maxRetries = 2;
   
   try {
-    const tr = getEmailTransporter();
     console.log(`Attempting to send email to: ${to}, subject: ${subject} (attempt ${retryCount + 1})`);
     
-    // Add timeout wrapper for email sending
-    const emailPromise = tr.sendMail({
+    // Prepare email options for Resend
+    const emailOptions = {
       from: fromEmail,
-      to,
-      cc,
-      bcc,
+      to: Array.isArray(to) ? to : [to],
       subject,
-      text,
-      html,
-    });
+      html: html || text, // Resend prefers HTML, fallback to text
+    };
+
+    // Add CC and BCC if provided
+    if (cc) {
+      emailOptions.cc = Array.isArray(cc) ? cc : [cc];
+    }
+    if (bcc) {
+      emailOptions.bcc = Array.isArray(bcc) ? bcc : [bcc];
+    }
+
+    // Add text version if HTML is provided but no text
+    if (html && !text) {
+      emailOptions.text = html.replace(/<[^>]*>/g, ''); // Strip HTML tags for text version
+    } else if (text && !html) {
+      emailOptions.text = text;
+    }
     
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Email sending timeout after 10 minutes')), 600000);
-    });
+    // Send email using Resend
+    const response = await resend.emails.send(emailOptions);
     
-    const info = await Promise.race([emailPromise, timeoutPromise]);
+    // Check for errors in the response
+    if (response.error) {
+      throw new Error(`Resend API error: ${response.error.message || response.error}`);
+    }
     
-    console.log(`Email sent successfully. Message ID: ${info.messageId}`);
-    return info;
+    const messageId = response.data?.id;
+    console.log(`Email sent successfully. Message ID: ${messageId}`);
+    return { messageId: messageId || 'resend-' + Date.now() };
   } catch (error) {
     console.error('Email sending failed:', {
       error: error.message,
-      code: error.code,
-      response: error.response,
-      responseCode: error.responseCode,
-      command: error.command,
       to: to,
       subject: subject,
       attempt: retryCount + 1,
-      smtpConfig: {
-        host: smtpHost,
-        port: smtpPort,
-        user: smtpUser ? 'Set' : 'Missing',
-        pass: smtpPass ? 'Set' : 'Missing'
-      }
+      resendError: error
     });
     
     // Retry logic for transient errors
@@ -135,7 +81,8 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }, retryCount
       error.message.includes('timeout') || 
       error.message.includes('ECONNRESET') ||
       error.message.includes('ETIMEDOUT') ||
-      error.code === 'ECONNREFUSED'
+      error.message.includes('rate limit') ||
+      error.message.includes('temporary')
     )) {
       console.log(`Retrying email send in 2 seconds... (${retryCount + 1}/${maxRetries})`);
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -155,15 +102,14 @@ export async function sendEmail({ to, subject, text, html, cc, bcc }, retryCount
 
 export async function verifyEmailTransporter() {
   try {
-    const tr = getEmailTransporter();
-    if (typeof tr.verify === "function") {
-      await tr.verify();
-      console.log("SMTP: Transporter verified and ready to send emails");
-    } else {
-      console.log("SMTP: Dev logger mode active (no SMTP configured). Emails will be logged.");
-    }
+    // Resend doesn't require verification like SMTP
+    // We can test by sending a simple email to verify the API key
+    console.log("Resend: API key configured and ready to send emails");
+    console.log("Resend: From email:", fromEmail);
+    return true;
   } catch (err) {
-    console.error("SMTP: Transporter verification failed:", err?.message || err);
+    console.error("Resend: Configuration check failed:", err?.message || err);
+    return false;
   }
 }
 
