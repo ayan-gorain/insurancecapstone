@@ -1,4 +1,4 @@
-# Capstone Insurance
+# LifeShield
 
 Full‑stack Insurance Management System with an Angular 20 frontend and a Node.js (Express 5 + Apollo Server 5) backend on MongoDB.
 
