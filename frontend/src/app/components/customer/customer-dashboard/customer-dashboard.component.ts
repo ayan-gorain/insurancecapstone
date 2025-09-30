@@ -26,7 +26,7 @@ export class CustomerDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Component initialization
+  
   }
 
   logout(): void {
@@ -35,7 +35,6 @@ export class CustomerDashboardComponent implements OnInit {
   }
 
   onImageError(event: any): void {
-    // Hide the image and show the fallback initial
     event.target.style.display = 'none';
     const fallback = event.target.nextElementSibling;
     if (fallback) {
@@ -43,5 +42,4 @@ export class CustomerDashboardComponent implements OnInit {
     }
   }
 
-  // Test email action removed
 }

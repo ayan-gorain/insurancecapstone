@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
-import { AgentDashbaord } from './agent-dashbaord';
+import { AgentDashbaord } from './agent-dashbaord.component';
 
 describe('AgentDashbaord', () => {
   let component: AgentDashbaord;

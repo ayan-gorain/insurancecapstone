@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 
-import { PendingClaims } from './pending-claims';
+import { PendingClaims } from './pending-claims.component';
 
 describe('PendingClaims', () => {
   let component: PendingClaims;

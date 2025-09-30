@@ -5,7 +5,7 @@ import { CustomerState, initialCustomerState } from './customer.state';
 export const customerReducer = createReducer(
   initialCustomerState,
 
-  // Load available policies
+  
   on(CustomerActions.loadAvailablePolicies, (state) => ({
     ...state,
     loading: true,
@@ -44,7 +44,7 @@ export const customerReducer = createReducer(
     error
   })),
 
-  // Buy policy
+
   on(CustomerActions.buyPolicy, (state) => ({
     ...state,
     loading: true,
@@ -63,7 +63,7 @@ export const customerReducer = createReducer(
     error
   })),
 
-  // Cancel policy
+
   on(CustomerActions.cancelPolicy, (state) => ({
     ...state,
     loading: true,
@@ -81,7 +81,7 @@ export const customerReducer = createReducer(
     error
   })),
 
-  // Submit claim
+
   on(CustomerActions.submitClaim, (state) => ({
     ...state,
     loading: true,
@@ -99,7 +99,7 @@ export const customerReducer = createReducer(
     error
   })),
 
-  // Submit claim without policy
+
   on(CustomerActions.submitClaimWithoutPolicy, (state) => ({
     ...state,
     loading: true,
@@ -117,7 +117,7 @@ export const customerReducer = createReducer(
     error
   })),
 
-  // Load my claims
+
   on(CustomerActions.loadMyClaims, (state) => ({
     ...state,
     loading: true,
@@ -135,7 +135,7 @@ export const customerReducer = createReducer(
     error
   })),
 
-  // Load claim details
+  
   on(CustomerActions.loadClaimDetails, (state) => ({
     ...state,
     loading: true,
@@ -153,7 +153,7 @@ export const customerReducer = createReducer(
     error
   })),
 
-  // Load claim stats
+
   on(CustomerActions.loadClaimStats, (state) => ({
     ...state,
     loading: true,

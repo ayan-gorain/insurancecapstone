@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import Claim from "../models/Claim.js";
 import cloudinary from "../config/cloudinary.js";
 import AuditLog from "../models/Auditlog.js";
-// Admin/Agent email notifications disabled
+
 import bcrypt from 'bcrypt';
 export const createPolicy = async (req, res) => {
   try {
@@ -34,7 +34,7 @@ export const createPolicy = async (req, res) => {
       details: { policyId: policy._id },
     });
 
-    // Emailing customers about new policy disabled
+   
 
     res.status(201).json(policy);
   } catch (err) {
@@ -324,10 +324,12 @@ export const getClaimAnalytics = async (req, res) => {
 
 export const listAuditLogs = async (req, res) => {
   try {
+    console.log('listAuditLogs called by user:', req.user?.email, req.user?.role);
     const logs = await AuditLog.find().populate('actorId', 'name email').sort({ timestamp: -1 }).limit(20);
+    console.log(`Found ${logs.length} audit logs`);
     res.json(logs);
   } catch (err) {
-    console.error(err);
+    console.error('Error in listAuditLogs:', err);
     res.status(500).json({ message: "Failed to fetch audit logs" });
   }
 };

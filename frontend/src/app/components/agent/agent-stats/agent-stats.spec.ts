@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 
-import { AgentStats } from './agent-stats';
+import { AgentStats } from './agent-stats.component';
 
 describe('AgentStats', () => {
   let component: AgentStats;

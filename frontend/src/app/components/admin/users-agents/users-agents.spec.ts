@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { UsersAgents } from './users-agents';
+import { UsersAgents } from './users-agents.component';
 
 describe('UsersAgents', () => {
   let component: UsersAgents;

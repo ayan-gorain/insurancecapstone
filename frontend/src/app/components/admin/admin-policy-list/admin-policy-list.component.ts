@@ -13,8 +13,8 @@ import { selectUser } from '../../../store/auth/auth.selectors';
   selector: 'app-admin-policy-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './admin-policy-list.html',
-  styleUrl: './admin-policy-list.css'
+  templateUrl: './admin-policy-list.component.html',
+  styleUrl: './admin-policy-list.component.css'
 })
 export class AdminPolicyList implements OnInit{
 

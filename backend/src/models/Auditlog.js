@@ -8,4 +8,4 @@ const auditlogSchema=new mongoose.Schema({
    timestamp:{type:Date,default:Date.now},
 })
 
-export default mongoose.model("Auditlog",auditlogSchema);
+export default mongoose.model("AuditLog",auditlogSchema);

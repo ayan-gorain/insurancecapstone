@@ -9,8 +9,7 @@ import { sendEmail, buildPolicyPurchaseEmail } from "../config/email.js";
 
 export const getAvailablePolicies = async (req, res) => {
     try {
-        console.log('getAvailablePolicies called by user:', req.user?.email, req.user?.role);
-        
+      
         
         const user = await User.findById(req.user._id)
             .populate('assignedAgentId', 'name email');
@@ -18,7 +17,7 @@ export const getAvailablePolicies = async (req, res) => {
         const policies = await PolicyProduct.find();
         
         
-        // Add assigned agent info to each policy
+
         const policiesWithAgent = policies.map(policy => ({
             ...policy.toObject(),
             assignedAgent: user.assignedAgentId ? {
@@ -43,9 +42,9 @@ export const buyPolicy = async (req, res) => {
       const { policyId } = req.params;
       const { startDate, termMonths, nominee, paymentMethod, paymentReference, cardNumber, upiId } = req.body;
   
-      console.log('Buy Policy Request:', { policyId, startDate, termMonths, nominee, paymentMethod, paymentReference, userId: req.user._id });
+
   
-      // Default and validate required fields more leniently
+      
       const resolvedStartDate = startDate ? new Date(startDate) : new Date();
       if (isNaN(resolvedStartDate.getTime())) {
         console.log('Validation failed - invalid startDate:', startDate);
@@ -65,7 +64,7 @@ export const buyPolicy = async (req, res) => {
       const resolvedPaymentMethod = paymentMethod || "CREDIT_CARD";
       const resolvedPaymentReference = paymentReference || `REF-${Date.now()}`;
   
-      // Validate payment method
+      
       const validMethods = ["CREDIT_CARD", "DEBIT_CARD", "BANK_TRANSFER", "PAYPAL", "CASH"];
       if (!validMethods.includes(resolvedPaymentMethod)) {
         return res.status(400).json({ 
@@ -73,7 +72,7 @@ export const buyPolicy = async (req, res) => {
         });
       }
   
-      // find the policy product
+     
       const policy = await PolicyProduct.findById(policyId);
       if (!policy) {
         console.log('Policy not found:', policyId);
@@ -102,13 +101,13 @@ export const buyPolicy = async (req, res) => {
         });
       }
   
-      // Calculate end date properly
+     
       const endDate = new Date(resolvedStartDate);
       endDate.setMonth(endDate.getMonth() + resolvedTermMonths);
   
       console.log('Creating user policy with dates:', { startDate: resolvedStartDate, endDate });
   
-      // create user policy
+      
       const userPolicy = await UserPolicy.create({
         userId: req.user._id,
         policyProductId: policyId,
@@ -121,7 +120,7 @@ export const buyPolicy = async (req, res) => {
 
       console.log('User policy created successfully:', userPolicy._id);
 
-      // Create payment record
+     
       const payment = await Payment.create({
         userId: req.user._id,
         policyId: policyId,
@@ -131,12 +130,12 @@ export const buyPolicy = async (req, res) => {
         reference: resolvedPaymentReference,
         cardNumber: cardNumber || null,
         upiId: upiId || null,
-        status: "COMPLETED" // Simulated payment - always successful
+        status: "COMPLETED" 
       });
 
       console.log('Payment recorded successfully:', payment._id);
 
-      // Send purchase confirmation email (non-blocking)
+     
       try {
         const { subject, text, html } = buildPolicyPurchaseEmail({
           name: req.user?.name || (req.user?.email?.split('@')[0] || 'Customer'),
@@ -154,7 +153,7 @@ export const buyPolicy = async (req, res) => {
         console.warn('Purchase email build/send error:', emailErr?.message || emailErr);
       }
 
-      // log action
+     
       await AuditLog.create({
         action: "BUY_POLICY",
         actorId: req.user._id,
@@ -206,7 +205,7 @@ export const cancelPolicy = async (req, res) => {
     try {
         const { id } = req.params;
         
-        // Find and update the user policy
+
         const userPolicy = await UserPolicy.findOneAndUpdate(
             { _id: id, userId: req.user._id, status: "ACTIVE" },
             { status: "CANCELLED" },
@@ -234,7 +233,7 @@ export const submitClaim = async (req, res) => {
     try {
       const { userPolicyId, incidentDate, incidentLocation, description, amount, images } = req.body;
   
-      // Check if user has an assigned agent
+
       const user = await User.findById(req.user._id);
       if (!user.assignedAgentId) {
         return res.status(403).json({ 
@@ -242,17 +241,16 @@ export const submitClaim = async (req, res) => {
         });
       }
   
-      // Validate required fields
       if (!userPolicyId || !incidentDate || !incidentLocation || !description || !amount) {
         return res.status(400).json({ message: "userPolicyId, incidentDate, incidentLocation, description, and amount are required" });
       }
   
-      // Validate amount is positive
+     
       if (amount <= 0) {
         return res.status(400).json({ message: "Amount must be a positive number" });
       }
   
-      // Validate images are provided (at least 2 for verification)
+      
       if (!images || !Array.isArray(images) || images.length < 2) {
         return res.status(400).json({ message: "At least 2 verification images are required" });
       }
@@ -262,20 +260,20 @@ export const submitClaim = async (req, res) => {
         return res.status(404).json({ message: "Active policy not found" });
       }
   
-      // Check if incident date is within policy period
+      
       const incidentDateObj = new Date(incidentDate);
       if (incidentDateObj < policy.startDate || incidentDateObj > policy.endDate) {
         return res.status(400).json({ message: "Incident date must be within policy period" });
       }
   
-      // Process images - simple approach
+      
       const processedImages = [];
       for (const image of images) {
-        // If it's a URL, use it directly
+     
         if (image.startsWith('http://') || image.startsWith('https://')) {
           processedImages.push(image);
         }
-        // If it's base64, try to upload to Cloudinary
+     
         else if (image.startsWith('data:')) {
           try {
             if (process.env.CLOUDINARY_CLOUD_NAME) {
@@ -286,11 +284,11 @@ export const submitClaim = async (req, res) => {
               });
               processedImages.push(uploadResult.secure_url);
             } else {
-              processedImages.push(image); // Store base64 if no Cloudinary
+              processedImages.push(image); 
             }
           } catch (error) {
             console.error("Image upload error:", error);
-            processedImages.push(image); // Fallback to original
+            processedImages.push(image); 
           }
         }
         // Treat anything else as URL
@@ -307,7 +305,7 @@ export const submitClaim = async (req, res) => {
         description,
         amountClaimed: parseFloat(amount),
         proofImage: processedImages,
-        status: "PENDING", // Goes to admin for approval
+        status: "PENDING", 
       });
   
       await AuditLog.create({
@@ -345,7 +343,7 @@ export const submitClaim = async (req, res) => {
     }
   };
 
-  // Get claim details
+ 
   export const getClaimDetails = async (req, res) => {
     try {
       const { claimId } = req.params;

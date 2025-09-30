@@ -33,7 +33,7 @@ const paymentSchema = new mongoose.Schema({
         index: true
     },
     
-    // Card and UPI specifics are no longer stored
+    
     cardNumber: {
         type: String,
         required: false,
@@ -63,16 +63,13 @@ const paymentSchema = new mongoose.Schema({
     }
 });
 
-// Reference field removed; no index required
-
-// No longer storing card/upi details; ensure they are unset if accidentally provided
 paymentSchema.pre('save', function(next) {
     this.cardNumber = undefined;
     this.upiId = undefined;
     next();
 });
 
-// Update the updatedAt field before saving
+
 paymentSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
     next();

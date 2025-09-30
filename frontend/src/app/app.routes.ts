@@ -3,7 +3,7 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { AdminPolicyComponent } from './components/admin/admin-policy/admin-policy.component';
-import { AdminPolicyList } from './components/admin/admin-policy-list/admin-policy-list';
+import { AdminPolicyList } from './components/admin/admin-policy-list/admin-policy-list.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { CustomerDashboardComponent } from './components/customer/customer-dashboard/customer-dashboard.component';
 import { CustomerPoliciesComponent } from './components/customer/customer-policies/customer-policies.component';
@@ -11,15 +11,15 @@ import { CustomerClaimsComponent } from './components/customer/customer-claims/c
 import { CustomerProfileComponent } from './components/customer/customer-profile/customer-profile.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-import { UsersAgents } from './components/admin/users-agents/users-agents';
-import { CreateAgent } from './components/admin/create-agent/create-agent';
+import { UsersAgents } from './components/admin/users-agents/users-agents.component';
+import { CreateAgent } from './components/admin/create-agent/create-agent.component';
 import { AuditLogsComponent } from './components/admin/audit-logs/audit-logs.component';
 import { SummaryDashboardComponent } from './components/admin/summary-dashboard/summary-dashboard.component';
-import { AgentDashbaord } from './components/agent/agent-dashbaord/agent-dashbaord';
-import { AgentCustomers } from './components/agent/agent-customers/agent-customers';
-import { PendingClaims } from './components/agent/pending-claims/pending-claims';
-import { AgentStats } from './components/agent/agent-stats/agent-stats';
-import { AgentProfile } from './components/agent/agent-profile/agent-profile';
+import { AgentDashbaord } from './components/agent/agent-dashbaord/agent-dashbaord.component';
+import { AgentCustomers } from './components/agent/agent-customers/agent-customers.component';
+import { PendingClaims } from './components/agent/pending-claims/pending-claims.component';
+import { AgentStats } from './components/agent/agent-stats/agent-stats.component';
+import { AgentProfile } from './components/agent/agent-profile/agent-profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

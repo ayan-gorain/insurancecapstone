@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 
-import { CustomerCrud } from './customer-crud';
+import { CustomerCrud } from './customer-crud.component';
 
 describe('CustomerCrud', () => {
   let component: CustomerCrud;

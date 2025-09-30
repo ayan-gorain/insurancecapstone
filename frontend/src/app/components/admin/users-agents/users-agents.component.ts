@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { selectAllAgents, selectAllUsers } from '../../../store/user/user.selectors';
 import { selectError, selectLoading } from '../../../store/auth/auth.selectors';
 import * as UserActions from '../../../store/user/user.action';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 
@@ -13,8 +13,8 @@ import { environment } from '../../../../environments/environment';
   selector: 'app-users-agents',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './users-agents.html',
-  styleUrl: './users-agents.css'
+  templateUrl: './users-agents.component.html',
+  styleUrl: './users-agents.component.css'
 })
 export class UsersAgents implements OnInit {
    users$: Observable<any[]>;
@@ -107,10 +107,6 @@ export class UsersAgents implements OnInit {
   assignAgentToCustomer() {
     if (this.selectedCustomer && this.selectedAgent) {
       
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json'
-      });
-
       const apiUrl = `${environment.apiUrl}/api/v1`;
       
       const requestBody = {
@@ -119,8 +115,8 @@ export class UsersAgents implements OnInit {
       };
       
       
-      // Call backend API to assign agent to customer
-      this.http.post(`${apiUrl}/admin/assign-agent`, requestBody, { headers }).subscribe({
+      
+      this.http.post(`${apiUrl}/admin/assign-agent`, requestBody).subscribe({
         next: (response: any) => {
           // Show success message
           alert(`Agent ${this.selectedAgent.name} has been assigned to customer ${this.selectedCustomer.name}`);

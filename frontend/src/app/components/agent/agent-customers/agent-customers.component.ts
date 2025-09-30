@@ -9,8 +9,8 @@ import * as AgentSelectors from '../../../store/agent/agent.selectors';
   selector: 'app-agent-customers',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './agent-customers.html',
-  styleUrl: './agent-customers.css'
+  templateUrl: './agent-customers.component.html',
+  styleUrl: './agent-customers.component.css'
 })
 export class AgentCustomers implements OnInit {
   customers$: Observable<any[]>;

@@ -12,8 +12,8 @@ import { selectAllAgents, selectUserLoading, selectUserError, selectCreatedAgent
 @Component({
   selector: 'app-create-agent',
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './create-agent.html',
-  styleUrl: './create-agent.css'
+  templateUrl: './create-agent.component.html',
+  styleUrl: './create-agent.component.css'
 })
 export class CreateAgent implements OnInit {
   agentForm: any;

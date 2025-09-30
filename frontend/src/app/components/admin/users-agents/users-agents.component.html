@@ -89,14 +89,13 @@
       </div>
     </div>
 
-    <!-- Agent Assignment Section -->
     <div *ngIf="view==='assignments' && !(loading$ | async)" class="bg-white/90 backdrop-blur-sm rounded-xl border border-gray-200 p-6 shadow-lg">
       <div class="mb-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-2">Assign Agent to Customer</h3>
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Customer Selection -->
+       
         <div class="bg-gray-50 rounded-lg p-4">
           <h4 class="text-md font-medium text-gray-800 mb-4">Select Customer</h4>
           <div class="space-y-2">
@@ -112,7 +111,7 @@
           </div>
         </div>
 
-        <!-- Agent Selection -->
+       
         <div class="bg-gray-50 rounded-lg p-4">
           <h4 class="text-md font-medium text-gray-800 mb-4">Select Agent</h4>
           <div class="space-y-2">
@@ -129,7 +128,6 @@
         </div>
       </div>
 
-      <!-- Assignment Button -->
       <div class="mt-6 text-center">
         <button (click)="assignAgentToCustomer()" 
                 [disabled]="!selectedCustomer || !selectedAgent"
@@ -139,7 +137,7 @@
       </div>
     </div>
 
-    <!-- Empty States -->
+   
     <div *ngIf="(users$ | async)?.length === 0 && view==='users' && !(loading$ | async)" 
          class="text-center py-8">
       <div class="text-gray-600">

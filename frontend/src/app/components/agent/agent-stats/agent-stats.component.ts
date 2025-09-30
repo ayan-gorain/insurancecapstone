@@ -9,8 +9,8 @@ import * as AgentSelectors from '../../../store/agent/agent.selectors';
   selector: 'app-agent-stats',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './agent-stats.html',
-  styleUrl: './agent-stats.css'
+  templateUrl: './agent-stats.component.html',
+  styleUrl: './agent-stats.component.css'
 })
 export class AgentStats implements OnInit {
   loading$: Observable<boolean>;

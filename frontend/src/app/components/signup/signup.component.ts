@@ -20,7 +20,7 @@ export class SignupComponent implements OnInit {
   photoBase64: string | null = null; // For sending to backend
   showPassword: boolean = false;
   
-  // Observable properties for state management
+  
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
   user$: Observable<any | null>;
@@ -30,17 +30,17 @@ export class SignupComponent implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      // Role is fixed to 'customer' - no user selection
+     
     });
 
-    // Initialize observables
+ 
     this.loading$ = this.store.select(selectLoading);
     this.error$ = this.store.select(selectError);
     this.user$ = this.store.select(selectUser);
   }
 
   ngOnInit() {
-    // Reset form to ensure clean state
+    
     this.resetForm();
   }
 
@@ -60,8 +60,8 @@ export class SignupComponent implements OnInit {
 
       const reader = new FileReader();
       reader.onload = () => {
-        this.photoPreview = reader.result; // For <img> preview
-        this.photoBase64 = reader.result as string; // For dispatch
+        this.photoPreview = reader.result; 
+        this.photoBase64 = reader.result as string; 
       };
       reader.readAsDataURL(file);
     }
@@ -76,7 +76,7 @@ export class SignupComponent implements OnInit {
           name,
           email,
           password,
-          role: 'customer', // Fixed role - only customers can signup
+          role: 'customer', 
           photo: this.photoBase64 || undefined
         })
       );

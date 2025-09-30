@@ -42,7 +42,6 @@ export class AdminPolicyComponent implements OnDestroy, OnInit {
     this.error$ = this.store.select(selectPolicyError);
     this.createdPolicy$ = this.store.select(selectCreatedPolicy);
 
-    // Full page refresh after successful creation
     this.createdSub = this.createdPolicy$.subscribe((policy) => {
       if (policy) {
         setTimeout(() => {
@@ -57,7 +56,6 @@ export class AdminPolicyComponent implements OnDestroy, OnInit {
     if (input.files && input.files[0]) {
       const file = input.files[0];
       
-      // Validate file type - allow all image formats
       const allowedTypes = [
         'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 
         'image/svg+xml', 'image/bmp', 'image/tiff', 'image/avif'
@@ -70,7 +68,7 @@ export class AdminPolicyComponent implements OnDestroy, OnInit {
         return;
       }
 
-      // Validate file size (max 5MB)
+      
       if (file.size > 5 * 1024 * 1024) {
         this.store.dispatch(PolicyActions.createPolicyFailure({ 
           error: 'Image size should be less than 5MB' 

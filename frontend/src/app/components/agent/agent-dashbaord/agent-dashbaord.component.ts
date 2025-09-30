@@ -12,8 +12,8 @@ import * as AgentSelectors from '../../../store/agent/agent.selectors';
   selector: 'app-agent-dashbaord',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
-  templateUrl: './agent-dashbaord.html',
-  styleUrl: './agent-dashbaord.css'
+  templateUrl: './agent-dashbaord.component.html',
+  styleUrl: './agent-dashbaord.component.css'
 })
 export class AgentDashbaord implements OnInit {
   user$: Observable<any | null>;

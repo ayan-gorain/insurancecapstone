@@ -19,7 +19,6 @@ import { PolicyEffects } from './store/policy/policy.effects';
 import { PolicyService } from './services/policy.service';
 import { userReducer } from './store/user/user.reducer';
 import { UserEffects } from './store/user/user.effects';
-import { AppInitializerService, initializeApp } from './services/app-initializer.service';
 import { CustomerPolicy } from './services/customer-policy';
 import { CustomerEffects } from './store/customer/customer.effects';
 import { customerReducer } from './store/customer/customer.reducer';
@@ -27,12 +26,13 @@ import { AgentEffects } from './store/agent/agent.effects';
 import { agentReducer } from './store/agent/agent.reducer';
 import { AgentService } from './services/agent';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { contentTypeInterceptor } from './interceptors/content-type.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, contentTypeInterceptor])),
     provideApollo(() => {
       const httpClient = inject(HttpClient);
       const httpLink = new HttpLink(httpClient);
@@ -55,15 +55,8 @@ export const appConfig: ApplicationConfig = {
       maxAge: 25,
       logOnly: false,
     }),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [AppInitializerService],
-      multi: true
-    },
     AuthService,
     PolicyService,
-    AppInitializerService,
     CustomerPolicy,
     AgentService
   ]

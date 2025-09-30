@@ -10,8 +10,8 @@ import * as AgentSelectors from '../../../store/agent/agent.selectors';
   selector: 'app-pending-claims',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './pending-claims.html',
-  styleUrl: './pending-claims.css'
+  templateUrl: './pending-claims.component.html',
+  styleUrl: './pending-claims.component.css'
 })
 export class PendingClaims implements OnInit {
   claims$: Observable<any[]>;

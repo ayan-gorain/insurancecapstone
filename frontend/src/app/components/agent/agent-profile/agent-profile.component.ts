@@ -6,7 +6,7 @@ import { selectUser } from '../../../store/auth/auth.selectors';
 
 @Component({
   selector: 'app-agent-profile',
-  templateUrl: './agent-profile.html',
+  templateUrl: './agent-profile.component.html',
   standalone: true,
   imports: [CommonModule]
 })

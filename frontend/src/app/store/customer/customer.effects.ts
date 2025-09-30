@@ -107,7 +107,7 @@ export class CustomerEffects {
     )
   );
 
-  // Reload claims after successful submission
+
   submitClaimSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CustomerActions.submitClaimSuccess),

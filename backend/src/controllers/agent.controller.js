@@ -124,12 +124,12 @@ export const reviewClaim = async (req, res) => {
         return res.status(400).json({ message: "Cannot approve claim for inactive policy" });
       }
       
-      // Check if incident date is within policy period
+    
       if (claim.incidentDate < userPolicy.startDate || claim.incidentDate > userPolicy.endDate) {
         return res.status(400).json({ message: "Incident date is outside policy period" });
       }
       
-      // Validate approved amount
+     
       if (approvedAmount && approvedAmount > claim.amountClaimed) {
         return res.status(400).json({ message: "Approved amount cannot exceed claimed amount" });
       }
@@ -194,7 +194,7 @@ export const getClaimDetails = async (req, res) => {
       return res.status(404).json({ message: "Claim not found" });
     }
     
-    // Verify the claim belongs to agent's assigned customer
+
     if (claim.userId.assignedAgentId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "You can only view claims for your assigned customers" });
     }
@@ -206,7 +206,7 @@ export const getClaimDetails = async (req, res) => {
   }
 };
 
-// Get agent's claim statistics
+
 export const getMyClaimStats = async (req, res) => {
   try {
     // Get customers assigned to this agent
@@ -298,12 +298,12 @@ export const getCustomerPolicies = async (req, res) => {
   }
 };
 
-// Get customer's claim history
+
 export const getCustomerClaims = async (req, res) => {
   try {
     const { customerId } = req.params;
     
-    // Verify customer is assigned to this agent
+ 
     const customer = await User.findOne({ 
       _id: customerId, 
       role: 'customer', 
@@ -334,7 +334,7 @@ export const getCustomerClaims = async (req, res) => {
   }
 };
 
-// Get agent's profile
+
 export const getMyProfile = async (req, res) => {
   try {
     const agent = await User.findById(req.user._id)
@@ -345,7 +345,7 @@ export const getMyProfile = async (req, res) => {
       return res.status(404).json({ message: "Agent not found" });
     }
     
-    // Get assigned customers count
+
     const assignedCustomersCount = await User.countDocuments({ 
       role: 'customer', 
       assignedAgentId: req.user._id 
@@ -377,7 +377,7 @@ export const updateMyProfile = async (req, res) => {
       { new: true, runValidators: true }
     ).select('-passwordHash');
     
-    // Log the action
+
     await AuditLog.create({
       action: "AGENT_UPDATE_PROFILE",
       actorId: req.user._id,

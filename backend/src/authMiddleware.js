@@ -3,8 +3,7 @@ import User from "./models/User.js";
 
 export const authMiddleware=async( req,res,next)=>{
     const token=req.headers.authorization?.split(" ")[1];
-    console.log('Auth middleware - Token present:', !!token);
-    console.log('Auth middleware - Request path:', req.path);
+    
     
     if(!token){
         console.log('Auth middleware - No token provided');
@@ -12,13 +11,13 @@ export const authMiddleware=async( req,res,next)=>{
     }
     try {
         const decoded=jwt.verify(token,process.env.JWT_SECRET);
-        console.log('Auth middleware - Token decoded for user:', decoded.userId);
+ 
         req.user=await User.findById(decoded.userId).select("-passwordHash");
         if(!req.user){
-            console.log('Auth middleware - User not found for ID:', decoded.userId);
+            
             return res.status(401).json({message:"Invalid token"});
         }
-        console.log('Auth middleware - User authenticated:', req.user.email, req.user.role);
+       
         next();
     } catch (error) {
         console.log('Auth middleware - Token verification failed:', error.message);

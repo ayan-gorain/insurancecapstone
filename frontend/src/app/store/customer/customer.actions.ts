@@ -37,7 +37,7 @@ export const loadClaimStats = createAction('[InsuranceHub] Load Claim Stats');
 export const loadClaimStatsSuccess = createAction('[InsuranceHub] Load Claim Stats Success', props<{ stats: any }>());
 export const loadClaimStatsFailure = createAction('[InsuranceHub] Load Claim Stats Failure', props<{ error: any }>());
 
-// Submit claim without policy actions
+
 export const submitClaimWithoutPolicy = createAction('[InsuranceHub] Submit Claim Without Policy', props<{ claimData: any }>());
 export const submitClaimWithoutPolicySuccess = createAction('[InsuranceHub] Submit Claim Without Policy Success', props<{ claim: any }>());
 export const submitClaimWithoutPolicyFailure = createAction('[InsuranceHub] Submit Claim Without Policy Failure', props<{ error: any }>());

@@ -3,9 +3,9 @@
     <h2 class="text-2xl font-bold text-gray-800">My Claims</h2>
     <div class="flex gap-3">
       <button (click)="loadAllData()" 
-              [disabled]="claimsLoading || statsLoading || agentLoading"
+              [disabled]="claimsLoading || statsLoading || agentLoading || policiesLoading"
               class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center">
-        <svg class="w-4 h-4 mr-2" [class.animate-spin]="claimsLoading || statsLoading || agentLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 mr-2" [class.animate-spin]="claimsLoading || statsLoading || agentLoading || policiesLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
         </svg>
         Refresh
@@ -130,7 +130,18 @@
       <!-- Policy Selection (Optional) -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Select Policy (Optional)</label>
-        <select formControlName="userPolicyId" 
+        
+        <!-- Loading state for policies -->
+        <div *ngIf="policiesLoading" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50">
+          <div class="flex items-center">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+            <span class="text-gray-600">Loading your policies...</span>
+          </div>
+        </div>
+        
+        <!-- Policy selection dropdown -->
+        <select *ngIf="!policiesLoading" 
+                formControlName="userPolicyId" 
                 class="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-400 focus:outline-none">
           <option value="">No active policy - Submit general claim</option>
           <option *ngFor="let policy of (customerState$ | async)?.myPolicies" 
@@ -139,6 +150,7 @@
             {{ policy.policyProductId?.title }} - {{ policy.status }}
           </option>
         </select>
+        
         <div class="text-sm text-gray-600 mt-1">
           <span class="font-semibold">Note:</span> You can submit claims even without an active policy. 
           If you have an active policy, select it above for faster processing.
@@ -243,17 +255,18 @@
       <!-- Submit Button -->
       <div class="flex gap-3 pt-4">
         <button type="submit" 
-                [disabled]="!claimForm.valid || claimImages.length < 2 || (customerState$ | async)?.loading"
+                [disabled]="!claimForm.valid || claimImages.length < 2 || submittingClaim || !hasAssignedAgent"
                 class="flex-1 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-          <span *ngIf="!(customerState$ | async)?.loading">Submit Claim</span>
-          <span *ngIf="(customerState$ | async)?.loading" class="flex items-center justify-center">
+          <span *ngIf="!submittingClaim">Submit Claim</span>
+          <span *ngIf="submittingClaim" class="flex items-center justify-center">
             <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-            Submitting...
+            Submitting Claim...
           </span>
         </button>
         <button type="button" 
                 (click)="showClaimForm = false; resetClaimForm()"
-                class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                [disabled]="submittingClaim"
+                class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
           Cancel
         </button>
       </div>

@@ -1,10 +1,21 @@
 import { TestBed } from '@angular/core/testing';
+import { Store } from '@ngrx/store';
+import { of } from 'rxjs';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [
+        {
+          provide: Store,
+          useValue: {
+            dispatch: jasmine.createSpy('dispatch'),
+            select: jasmine.createSpy('select').and.returnValue(of({}))
+          }
+        }
+      ]
     }).compileComponents();
   });
 

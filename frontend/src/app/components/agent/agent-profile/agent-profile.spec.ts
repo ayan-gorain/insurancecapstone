@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 
-import { AgentProfile } from './agent-profile';
+import { AgentProfile } from './agent-profile.component';
 
 describe('AgentProfile', () => {
   let component: AgentProfile;

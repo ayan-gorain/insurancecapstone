@@ -8,7 +8,7 @@ export const selectToken = createSelector(selectAuthState, (state) => state.toke
 export const selectLoading = createSelector(selectAuthState, (state) => state.loading);
 export const selectError = createSelector(selectAuthState, (state) => state.error);
 
-// Check if auth initialization is complete
+
 export const selectAuthInitialized = createSelector(
   selectAuthState,
   (state) => !state.loading

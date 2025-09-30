@@ -7,6 +7,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { 
   loadMyClaims,
   loadClaimStats,
+  loadMyPolicies,
   submitClaim,
   submitClaimWithoutPolicy,
   submitClaimSuccess,
@@ -32,6 +33,8 @@ export class CustomerClaimsComponent implements OnInit {
   claimsLoading: boolean = true;
   statsLoading: boolean = true;
   agentLoading: boolean = true;
+  policiesLoading: boolean = true;
+  submittingClaim: boolean = false;
   
   // Claim form
   claimForm: FormGroup;
@@ -61,8 +64,8 @@ export class CustomerClaimsComponent implements OnInit {
       ofType(submitClaimSuccess, submitClaimWithoutPolicySuccess)
     ).subscribe(() => {
       alert('Claim submitted successfully! Your claim has been sent for review.');
-      // Clear cache to ensure fresh data is loaded
-      this.customerPolicy.clearCache();
+      // Reload data to get fresh information
+      this.loadAllData();
     });
 
     // Listen to store changes to update loading states
@@ -77,6 +80,14 @@ export class CustomerClaimsComponent implements OnInit {
         this.statsLoading = false;
       }
       
+      // Update policies loading state
+      if (state.myPolicies !== undefined) {
+        this.policiesLoading = false;
+      }
+      
+      // Update submission loading state
+      this.submittingClaim = state.loading;
+      
       // Handle errors
       if (state.error) {
         console.error('Customer state error:', state.error);
@@ -84,6 +95,8 @@ export class CustomerClaimsComponent implements OnInit {
         this.claimsLoading = false;
         this.statsLoading = false;
         this.agentLoading = false;
+        this.policiesLoading = false;
+        this.submittingClaim = false;
       }
     });
 
@@ -96,13 +109,12 @@ export class CustomerClaimsComponent implements OnInit {
     this.claimsLoading = true;
     this.statsLoading = true;
     this.agentLoading = true;
+    this.policiesLoading = true;
 
-    // Clear cache to ensure fresh data
-    this.customerPolicy.clearCache();
-
-    // Load claims and stats in parallel
+    // Load claims, stats, and policies in parallel
     this.loadMyClaims();
     this.loadClaimStats();
+    this.loadMyPolicies();
     this.checkAgentAssignment();
   }
 
@@ -131,6 +143,11 @@ export class CustomerClaimsComponent implements OnInit {
   // Load claim stats
   loadClaimStats(): void {
     this.store.dispatch(loadClaimStats());
+  }
+
+  // Load my policies
+  loadMyPolicies(): void {
+    this.store.dispatch(loadMyPolicies());
   }
 
   // Claim submission methods

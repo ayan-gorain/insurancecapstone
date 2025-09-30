@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { Actions } from '@ngrx/effects';
 
-import { AdminPolicyList } from './admin-policy-list';
+import { AdminPolicyList } from './admin-policy-list.component';
 import { CustomerPolicy } from '../../../services/customer-policy';
 
 describe('AdminPolicyList', () => {

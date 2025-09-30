@@ -43,14 +43,24 @@ export class AuditLogsComponent implements OnInit {
     });
 
     const apiUrl = `${environment.apiUrl}/api/v1`;
+    const token = localStorage.getItem('token');
+    
+    console.log('Loading audit logs...');
+    console.log('API URL:', `${apiUrl}/admin/audit`);
+    console.log('Token present:', !!token);
+    console.log('Token value:', token ? token.substring(0, 20) + '...' : 'No token');
 
     this.http.get<AuditLog[]>(`${apiUrl}/admin/audit`, { headers }).subscribe({
       next: (logs) => {
+        console.log('Audit logs loaded successfully:', logs);
         this.auditLogs = logs;
         this.loading = false;
       },
       error: (error) => {
         console.error('Error loading audit logs:', error);
+        console.error('Error status:', error.status);
+        console.error('Error message:', error.message);
+        console.error('Error body:', error.error);
         this.error = error.error?.message || 'Failed to load audit logs';
         this.loading = false;
       }

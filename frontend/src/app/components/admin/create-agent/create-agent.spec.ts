@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 
-import { CreateAgent } from './create-agent';
+import { CreateAgent } from './create-agent.component';
 
 describe('CreateAgent', () => {
   let component: CreateAgent;

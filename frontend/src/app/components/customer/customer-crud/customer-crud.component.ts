@@ -14,8 +14,8 @@ import { CustomerState } from '../../../store/customer/customer.state';
 @Component({
   selector: 'app-customer-crud',
   imports: [CommonModule, FormsModule],
-  templateUrl: './customer-crud.html',
-  styleUrl: './customer-crud.css'
+  templateUrl: './customer-crud.component.html',
+  styleUrl: './customer-crud.component.css'
 })
 export class CustomerCrud implements OnInit {
   
